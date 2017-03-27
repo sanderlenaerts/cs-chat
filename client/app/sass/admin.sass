@@ -1,0 +1,38 @@
+@import "vars"
+
+.nav-header
+  color: $grey-tint
+
+  .header-container
+    display: flex
+    justify-content: space-between
+    align-items: center
+
+    .company-logo
+      display: inline-block
+
+    a
+      padding-right: 43px
+
+      &:hover
+        cursor: pointer
+        color: darken($grey-tint, 15%)
+
+  .inner-nav
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(237,237,237,1)
+    -moz-box-shadow: 0px 0px 5px 0px rgba(237,237,237,1)
+    box-shadow: 0px 0px 5px 0px rgba(237,237,237,1)
+
+    ul
+      margin: 0
+      padding: 0
+
+      li
+        padding: 15px
+
+        &:hover
+          color: darken($grey-tint, 15%)
+          cursor: pointer
+
+        &.active
+          color: darken($grey-tint, 15%)

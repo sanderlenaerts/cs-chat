@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>HQWifi - Customer Service</title>
+
+    <!-- Base needed for angular 2 routing -->
+    <base href="/">
+
+    <link rel="shortcut icon" href="http://hq.net.nz/favicon.ico?v=2">
+
+    <!-- Default font -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+    <link rel="stylesheet" href="./dist/assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+
+    <!-- Base css -->
+    <link rel="stylesheet" href="./dist/assets/css/default.css">
+
+    <!--  Load the dependencies -->
+    <script src="node_modules/core-js/client/shim.min.js" charset="utf-8"></script>
+    <script src="node_modules/zone.js/dist/zone.js" charset="utf-8"></script>
+    <script src="node_modules/reflect-metadata/Reflect.js" charset="utf-8"></script>
+
+    <!-- Load angular with system js -->
+    <script src="node_modules/systemjs/dist/system.src.js" charset="utf-8"></script>
+    <script src="systemjs.config.js" charset="utf-8"></script>
+
+    <script>
+        System.import('app').catch(function(err) {
+            console.error(err);
+        })
+    </script>
+</head>
+
+<body>
+    <my-app></my-app>
+</body>
+
+</html>

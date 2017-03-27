@@ -1,0 +1,128 @@
+@import "vars"
+
+.chatbox
+  box-shadow: $shadow-medium
+
+.btn-container
+  text-align: center
+  position: relative
+  top: 50%
+
+  .btn
+    padding: 15px 25px
+    text-transform: uppercase
+    color: $off-white
+    border: none
+    margin: 0 auto
+    position: relative
+    top: 50%
+
+    &:focus
+      outline: none
+
+    &:hover
+      cursor: pointer
+
+  .success-btn
+    background-color: $success
+
+  .danger-btn
+    background-color: $danger
+
+
+.chat-header
+  background-color: $success
+  display: flex
+  justify-content: space-between
+  align-items: stretch
+  color: $off-white
+
+  .inner-chat-header
+    display: flex
+    align-items: center
+
+    h3
+      font-size: $font-size-small
+      margin: 0
+      padding: 0 0 0 15px
+
+  .close-button
+    padding: 10px
+    display: flex
+    align-items: center
+    background-color: $danger
+    i
+      font-size: $font-size-large
+
+.chat-content
+  background-color: rgba(256, 256, 256, 0.8)
+  height: 400px
+  overflow-y: scroll
+
+  .messages
+    padding: 20px 10px
+
+    .message
+      margin-bottom: 10px
+
+      h4, p
+        margin: 0
+        padding: 0
+
+      p
+        color: $off-black
+
+    .employee
+      h4
+        color: $social-blue
+
+    .customer
+      h4
+        color: $danger
+
+.chat-input
+  form
+    display: flex
+    flex: 0 0 100%
+
+
+    .send-text
+      display: flex
+      width: 20%
+      max-width: 200px
+      min-width: 100px
+      border: none
+      color: white
+      text-transform: uppercase
+      font-size: $font-size-small
+      background-color: $success
+      font-weight: 200
+      letter-spacing: 0.1rem
+      justify-content: center
+      align-items: center
+
+      i
+        padding-left: 10px
+
+      &:hover
+        cursor: pointer
+        background-color: lighten($success, 10%)
+
+      &:focus
+        outline: none
+
+      &:active
+        background-color: lighten($success, 15%)
+
+    .text-input
+      font-family: 'Open Sans', sans-serif
+      color: $off-black
+      font-size: 1rem
+      flex-grow: 2
+      border: none
+      font-weight: bolder
+      padding: 15px
+      border-top: 1px solid lighten($grey-tint, 30%)
+
+      &:focus
+        outline: none

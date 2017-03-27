@@ -1,0 +1,93 @@
+@import "vars"
+@import "components/modal"
+
+
+.buttons-container
+  display: flex
+  justify-content: space-between
+
+  .search-container
+    display: inline-block
+    margin: 20px
+    width: 50%
+
+
+    input
+      border: none
+      border-radius: 25px
+      padding: 15px 25px
+      -webkit-box-shadow: 0px 0px 5px 0px rgba(237,237,237,1)
+      -moz-box-shadow: 0px 0px 5px 0px rgba(237,237,237,1)
+      box-shadow: 0px 0px 5px 0px rgba(237,237,237,1)
+      font-family: 'Open Sans', sans-serif
+      color: $grey-tint
+      font-size: $font-size-tiny
+      width: 100%
+
+      &:focus
+        outline: none
+
+      &::placeholder
+        color: $grey-tint
+
+
+  .success-button
+    display: inline-block
+    background-color: $success
+    color: $off-white
+    padding: 15px 25px
+    margin: 20px
+    border-radius: 25px
+    text-transform: uppercase
+    font-size: $font-size-tiny
+
+    &:hover
+      background-color: lighten($success, 10%)
+      cursor: pointer
+
+.cards
+  display: flex
+  flex-wrap: wrap
+
+  .user-card
+    -webkit-box-shadow: $shadow-medium
+    -moz-box-shadow: $shadow-medium
+    box-shadow: $shadow-medium
+    display: flex
+    justify-content: center
+    align-items: center
+    width: calc(50% - 50px)
+    box-sizing: border-box
+    margin: 10px 25px
+
+    .delete-user
+      font-size: 32px
+      background-color: $danger
+      display: flex
+      width: 84px
+      height: 84px
+      justify-content: center
+      align-items: center
+      color: $off-white
+
+      &:hover
+        background-color: lighten($danger, 10%)
+        cursor: pointer
+
+    .username
+      flex-grow: 2
+      padding-left: 25px
+      color: darken($grey-tint, 20%)
+
+    .user-role
+      background-color: lighten($grey-tint, 35%)
+      color: darken($grey-tint, 20%)
+      text-transform: uppercase
+      height: 84px
+      width: 84px
+      display: flex
+      justify-content: center
+      align-items: center
+
+      p
+        font-size: $font-size-tiny
