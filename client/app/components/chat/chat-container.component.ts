@@ -14,16 +14,16 @@ import { AuthenticationService } from '../../services/authentication.service';
         <p>{{amountQueue}}</p>
       </section>
       <section *ngIf="isConnected" class="divider">
-        <button class="btn danger-btn full-btn">Quit work</button>
+        <button class="btn danger-btn full-btn" (click)="quitWork()">Quit work</button>
       </section>
       <section *ngIf="!isConnected" class="divider">
         <button class="btn success-btn full-btn" (click)="startWork()">Start work</button>
       </section>
-      <section [ngClass]="(isConnected && (amountQueue > 0)) ? 'divider' : ''">
+      <section [ngClass]="((isConnected && (amountQueue > 0)) || (isConnected && active)) ? 'divider' : ''" *ngIf="isConnected && (amountQueue > 0)  || (isConnected && active)">
         <p>Chatting with:</p>
         <p>{{partner}}</p>
       </section>
-      <section *ngIf="isConnected && (amountQueue > 0)">
+      <section *ngIf="isConnected && (amountQueue > 0)  || (isConnected && active)">
         <button *ngIf="!active" class="btn success-btn full-btn" (click)="nextCustomer()">Next customer</button>
 
         <button *ngIf="active" class="btn danger-btn full-btn" (click)="stopConversation()">Stop conversation</button>
@@ -31,7 +31,7 @@ import { AuthenticationService } from '../../services/authentication.service';
     </div>
     <div *ngIf="!active && !isLoggedIn" class="btn-container">
       <button [ngClass]="{'success-btn': inQueue == false, 'danger-btn': inQueue == true}" (click)="toggleQueue()" class="btn full-btn">{{ inQueue ? 'Leave queue' : 'Start chatting'}}</button>
-      <p *ngIf="inQueue">You are currently number x in queue</p>
+      <p *ngIf="inQueue">You are currently number {{position}} in queue</p>
     </div>
   </div>
 
@@ -49,6 +49,7 @@ export class ChatContainerComponent implements OnInit {
   active: boolean;
   partner: String;
   amountQueue: Number;
+  position: Number;
 
   constructor(private chatService: ChatService, private authenticationService: AuthenticationService){}
 
@@ -65,6 +66,12 @@ export class ChatContainerComponent implements OnInit {
       this.handleData(data);
     })
     this.isConnected = true;
+  }
+
+  quitWork(){
+    this.stopConversation();
+    this.connection.unsubscribe();
+    this.isConnected = false;
   }
 
   ngOnDestroy(){
@@ -128,6 +135,9 @@ export class ChatContainerComponent implements OnInit {
     }
     else if (data.type == 'queue-length'){
       this.amountQueue = data.length;
+    }
+    else if (data.type == 'queue-position'){
+      this.position = data.position;
     }
   }
 }

@@ -62,6 +62,10 @@ export class ChatService {
         observer.next(data);
       })
 
+      this.socket.on('queue-position', (data) => {
+        observer.next(data);
+      })
+
       return () => {
         this.socket.disconnect();
       };

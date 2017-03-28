@@ -32,6 +32,7 @@ module.exports = function(io) {
         console.log(queue);
 
         updateQueueAmount();
+        updateCustomerQueuePosition();
 
       }
       else {
@@ -45,6 +46,8 @@ module.exports = function(io) {
         if (io.sockets.connected[socket.id]) {
           io.sockets.connected[socket.id].emit('queue-length',{type:'queue-length', length: queue.length});
         }
+
+
       }
     })
 
@@ -105,6 +108,7 @@ module.exports = function(io) {
         }
 
         updateQueueAmount();
+        updateCustomerQueuePosition();
 
       }
     })
@@ -243,6 +247,7 @@ module.exports = function(io) {
       if (index > -1) {
         queue.splice(index, 1);
       }
+      updateCustomerQueuePosition();
     }
 
     //Leaving the queue
@@ -283,6 +288,23 @@ module.exports = function(io) {
         io.sockets.connected[socket.id].emit('message', {type: 'new-message', text: message, from: name});
       }
     })
+
+    var updateCustomerQueuePosition = function(){
+      for (i = 0; i < queue.length; i++) {
+        console.log(queue[i]);
+        sendPositionInQueue(queue[i]);
+      }
+
+    }
+
+    var sendPositionInQueue = function(id){
+      console.log('Sending position');
+      var index = queue.indexOf(id);
+      var position = index + 1;
+      if (io.sockets.connected[id]) {
+        io.sockets.connected[id].emit('queue-position',{type:'queue-position', position: position});
+      }
+    }
 
     var findName = function(){
       if (clientsInChat.hasOwnProperty(socket.id)){
