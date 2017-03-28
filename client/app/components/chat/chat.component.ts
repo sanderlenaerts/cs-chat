@@ -1,13 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'chat',
   template: `
-    <div class="chatbox">
-
-
+    <div class="chatbox" [ngClass]="!isLoggedIn ? 'full-chatbox' : ''">
       <div class="chat-header">
         <div class="inner-chat-header">
           <h3>Live Chat Support</h3>
@@ -15,31 +13,18 @@ import { ChatService } from '../../services/chat.service';
         <div class="close-button"><i class="fa fa-times" aria-hidden="true"></i></div>
       </div>
       <div class="chat-content">
-        <div *ngIf="!chatActive" class="btn-container">
-          <p *ngIf="inQueue">You are currently number x in queue</p>
-          <button [ngClass]="{'success-btn': inQueue == false, 'danger-btn': inQueue == true}" (click)="toggleQueue()" class="btn">{{ inQueue ? 'Leave queue' : 'Start chatting'}}</button>
-        </div>
-        <div class="messages" *ngIf="chatActive">
-          <div class="message employee">
-            <h4>Sander</h4>
-            <p>Hi there. How can I be of help?</p>
-          </div>
-          <div class="message customer">
-            <h4>Customer47809</h4>
-            <p>Hello. I have some trouble connecting to the internet on my iPad.</p>
-          </div>
-        </div>
-        <ng-container *ngIf="chatActive">
+        <p *ngIf="active">You are currently chatting with {{partner}}</p>
+        <ng-container *ngIf="active">
           <div class="messages">
             <div class="message employee" *ngFor="let message of messages">
-              <h4>Sander</h4>
-              <p>{{message}}</p>
+              <h4>{{message.from}}</h4>
+              <p>{{message.text}}</p>
             </div>
           </div>
         </ng-container>
 
       </div>
-      <div class="chat-input" *ngIf="chatActive">
+      <div class="chat-input" *ngIf="active">
         <form>
           <textarea rows="2" class="text-input" [(ngModel)]="message" name="message"></textarea>
           <button class="send-text" type="submit" (click)="sendMessage()">Send <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
@@ -50,13 +35,20 @@ import { ChatService } from '../../services/chat.service';
   styleUrls: ['./dist/assets/css/chatbox.css']
 })
 
-export class ChatComponent implements OnInit, OnDestroy {
+export class ChatComponent implements OnInit {
 
   isLoggedIn: boolean
-  inQueue: boolean;
-  chatActive: boolean;
-  connection: any;
-  messages: any [] = [];
+
+  @Input()
+  active: boolean;
+  workActive: boolean;
+
+  @Input()
+  partner: String;
+
+  @Input()
+  messages: any [];
+
   message: String = '';
 
   constructor(private authenticationService : AuthenticationService, private chatService : ChatService){
@@ -65,16 +57,8 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnInit(){
     this.isLoggedIn = this.authenticationService.isLoggedIn();
-    this.inQueue = false;
-    this.chatActive = true;
-
-    this.connection = this.chatService.getMessages().subscribe(data => {
-      this.messages.push(data.text);
-    })
-  }
-
-  toggleQueue(){
-    this.inQueue = !this.inQueue;
+    this.active = false;
+    this.workActive = false;
   }
 
   sendMessage(){
@@ -82,7 +66,4 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.message = '';
   }
 
-  ngOnDestroy() {
-    this.connection.unsubscribe();
-  }
 }

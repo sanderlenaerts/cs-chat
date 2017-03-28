@@ -1,6 +1,25 @@
 @import "vars"
+@import "components/buttons"
 
 .chatcontainer
-  width: 80%
-  max-width: 900px
-  margin: 40px auto
+  margin: 40px 5%
+
+.controls
+  width: 25%
+  display: inline-block
+  box-sizing: border-box
+  position: absolute
+  box-shadow: $shadow-medium
+  padding: 15px
+  background-color: white
+
+  section
+    padding: 25px 0
+
+  .divider
+    border-bottom: 1px solid lighten($grey-tint, 30%)
+
+  p
+    font-size: $font-size-small
+    text-align: center
+    color: $off-black

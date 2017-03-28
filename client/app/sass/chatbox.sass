@@ -1,34 +1,16 @@
 @import "vars"
+@import "components/buttons"
 
 .chatbox
   box-shadow: $shadow-medium
+  width: 60%
+  margin-right: 5%
+  display: inline-block
+  box-sizing: border-box
 
-.btn-container
-  text-align: center
-  position: relative
-  top: 50%
-
-  .btn
-    padding: 15px 25px
-    text-transform: uppercase
-    color: $off-white
-    border: none
-    margin: 0 auto
-    position: relative
-    top: 50%
-
-    &:focus
-      outline: none
-
-    &:hover
-      cursor: pointer
-
-  .success-btn
-    background-color: $success
-
-  .danger-btn
-    background-color: $danger
-
+.full-chatbox
+  width: 100%
+  margin-right: 0
 
 .chat-header
   background-color: $success
@@ -58,6 +40,13 @@
   background-color: rgba(256, 256, 256, 0.8)
   height: 400px
   overflow-y: scroll
+
+  p
+    padding: 10px
+    margin: 0
+    font-size: $font-size-tiny
+    color: $grey-tint
+
 
   .messages
     padding: 20px 10px

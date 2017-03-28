@@ -17,6 +17,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import { AdminComponent } from './components/admin.component';
 import { UsersComponent } from './components/users.component';
 import { RegisterComponent } from './components/register.component';
+import { ChatcontrolsComponent } from './components/chat/chatcontrols.component';
 
 // Services
 import { CookieService } from 'angular2-cookie/services/cookies.service';
@@ -58,7 +59,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     PublicComponent,
     AdminComponent,
     UsersComponent,
-    RegisterComponent
+    RegisterComponent,
+    ChatcontrolsComponent
   ],
   bootstrap: [ AppComponent ],
   providers: [
