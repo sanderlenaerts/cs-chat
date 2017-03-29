@@ -33,12 +33,12 @@ export class ChatService {
     this.socket.emit('add-message', message);
   }
 
-  joinQueue() {
-    return this.registerSocket();
+  joinQueue(customer) {
+    return this.registerSocket(customer);
 
   }
 
-  private registerSocket(){
+  private registerSocket(d){
     let observable = new Observable(observer => {
       this.socket = io(this.url);
       this.socket.on('message', (data) => {
@@ -47,7 +47,21 @@ export class ChatService {
 
       this.socket.on('connect', (data) => {
         console.log('connect');
-        this.socket.emit('data', this.authenticationService.user);
+        let userData;
+        let type;
+        if (d){
+          userData = d;
+          type = "register";
+        }
+        else {
+          userData = this.authenticationService.user;
+          type = "auth";
+        }
+        this.socket.emit('data',
+        {
+          user: userData,
+          type: type
+        });
       })
 
       this.socket.on('match-complete', (data) => {
@@ -79,7 +93,7 @@ export class ChatService {
   }
 
   startWork(){
-    return this.registerSocket();
+    return this.registerSocket(null);
   }
 
   quitWork(){

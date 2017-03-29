@@ -18,6 +18,10 @@ import { AdminComponent } from './components/admin.component';
 import { UsersComponent } from './components/users.component';
 import { RegisterComponent } from './components/register.component';
 import { ChatcontrolsComponent } from './components/chat/chatcontrols.component';
+import { UserInputComponent } from './components/chat/user-input.component';
+
+// Validators
+import { EmailValidator } from './components/validators/email.validator';
 
 // Services
 import { CookieService } from 'angular2-cookie/services/cookies.service';
@@ -34,7 +38,6 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 
 // Components
 import { appRouting } from './app.routing';
-
 import { AuthHttp, AuthConfig } from 'angular2-jwt';
 
 function authHttpServiceFactory(http: Http, options: RequestOptions) {
@@ -60,7 +63,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     AdminComponent,
     UsersComponent,
     RegisterComponent,
-    ChatcontrolsComponent
+    ChatcontrolsComponent,
+    UserInputComponent
   ],
   bootstrap: [ AppComponent ],
   providers: [

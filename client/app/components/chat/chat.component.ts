@@ -1,6 +1,8 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ChatService } from '../../services/chat.service';
+
+
 
 @Component({
   selector: 'chat',
@@ -15,7 +17,7 @@ import { ChatService } from '../../services/chat.service';
       <div class="chat-content">
         <p *ngIf="active">You are currently chatting with {{partner}}</p>
         <ng-container *ngIf="active">
-          <div class="messages">
+          <div #messageList class="messages messageList">
             <div class="message employee" *ngFor="let message of messages">
               <h4>{{message.from}}</h4>
               <p>{{message.text}}</p>
@@ -25,19 +27,22 @@ import { ChatService } from '../../services/chat.service';
 
       </div>
       <div class="chat-input" *ngIf="active">
-        <form>
-          <textarea rows="2" class="text-input" [(ngModel)]="message" name="message"></textarea>
+        <div>
+          <textarea #text (keydown.enter)="sendMessage();false" rows="2" class="text-input" [(ngModel)]="message" name="message"></textarea>
           <button class="send-text" type="submit" (click)="sendMessage()">Send <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-        </form>
+        </div>
       </div>
     </div>
   `,
   styleUrls: ['./dist/assets/css/chatbox.css']
 })
 
-export class ChatComponent implements OnInit {
+export class ChatComponent implements OnInit, AfterViewChecked {
 
+  @ViewChild('messageList') private myScrollContainer: ElementRef;
   isLoggedIn: boolean
+
+  @ViewChild('textarea') text: ElementRef;
 
   @Input()
   active: boolean;
@@ -62,8 +67,23 @@ export class ChatComponent implements OnInit {
   }
 
   sendMessage(){
-    this.chatService.sendMessage(this.message);
-    this.message = '';
+    if (this.message != ''){
+      console.log(this.message);
+      this.chatService.sendMessage(this.message);
+      this.message = '';
+    }
   }
 
+
+  ngAfterViewChecked(){
+    console.log('After view checked');
+    this.scrollToBottom();
+  }
+
+  scrollToBottom(): void {
+      try {
+          console.log('Scrollheight: ', this.myScrollContainer.nativeElement.scrollHeight);
+          this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+      } catch(err) { }
+    }
 }

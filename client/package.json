@@ -43,6 +43,7 @@
     "@angular/platform-browser": "^2.4.8",
     "@angular/platform-browser-dynamic": "^2.4.8",
     "@angular/router": "^3.4.8",
+    "angular2-auto-scroll": "^1.0.12",
     "angular2-cookie": "^1.2.6",
     "angular2-jwt": "^0.2.0",
     "bcrypt": "^1.0.2",

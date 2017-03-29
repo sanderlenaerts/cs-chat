@@ -12,6 +12,8 @@ var staffInChat = {}
 
 var clientsInChat = {}
 
+var clientInformation = {}
+
 var customerId = 1;
 
 module.exports = function(io) {
@@ -20,24 +22,14 @@ module.exports = function(io) {
 
     socket.emit('connect', {});
 
-    //TODO: register the user in a list of either clients or staff
-    socket.on('data', function(user){
-      console.log(user);
+    //register the user in a list of either clients or staff
+    socket.on('data', function(data){
+      console.log(data);
 
-      if (user.username == '' || user.name == ''){
-        // this means it is client/customer
-
-        // Push it to the queue
-        queue.push(socket.id);
-        console.log(queue);
-
-        updateQueueAmount();
-        updateCustomerQueuePosition();
-
-      }
-      else {
+      if (data.type == "auth"){
+        // logged in user
         var client = new Object();
-        client.name = user.name;
+        client.name = data.user.name;
 
         //Save the data about staff member to object literal
         staff[socket.id] = client;
@@ -46,9 +38,27 @@ module.exports = function(io) {
         if (io.sockets.connected[socket.id]) {
           io.sockets.connected[socket.id].emit('queue-length',{type:'queue-length', length: queue.length});
         }
-
-
       }
+      else {
+        // customer
+
+        // Push it to the queue
+        queue.push(socket.id);
+        console.log(queue);
+
+        //TODO: Change structure so it is an array of objects instead of array of socket ids
+        var obj = new Object();
+        obj.name = data.user.name;
+        obj.description = data.user.description;
+        obj.email = data.user.email;
+        obj.ip = socket.handshake.address;
+
+        clientInformation[socket.id] = obj;
+
+        updateQueueAmount();
+        updateCustomerQueuePosition();
+      }
+
     })
 
     var updateQueueAmount = function(){
@@ -98,13 +108,22 @@ module.exports = function(io) {
           delete staff[socket.id];
         }
 
+        var clientInfo = clientInformation[obj.partner];
+
+        console.log(clientInfo);
+        clientInfo.type = 'start';
+
+        var newObj = {
+          type: 'start',
+          name: obj.name
+        }
 
         // Send a "start chatting" message to everyone
         if (io.sockets.connected[socket.id]) {
-          io.sockets.connected[socket.id].emit('match-complete', {type: 'start', chattingWith: client.name });
+          io.sockets.connected[socket.id].emit('match-complete', clientInfo);
         }
         if (io.sockets.connected[obj.partner]){
-          io.sockets.connected[obj.partner].emit('match-complete', {type: 'start', chattingWith: obj.name});
+          io.sockets.connected[obj.partner].emit('match-complete', newObj);
         }
 
         updateQueueAmount();
@@ -126,10 +145,16 @@ module.exports = function(io) {
         if (clientInQueue()){
           removeFromQueue();
           updateQueueAmount();
+
+
         }
         else {
           // If not in queue, client's in chat
           stopConversationByClient();
+        }
+
+        if (clientInformation.hasOwnProperty(socket.id)){
+          delete clientInformation[socket.id];
         }
       }
       else if (isStaff()){
@@ -221,6 +246,10 @@ module.exports = function(io) {
 
       endConversation(clientId);
       updateQueueAmount();
+
+      if (clientInformation.hasOwnProperty(clientId)){
+        delete clientInformation[clientId];
+      }
     }
 
     var deleteConversationTraces = function(){
@@ -248,6 +277,7 @@ module.exports = function(io) {
         queue.splice(index, 1);
       }
       updateCustomerQueuePosition();
+
     }
 
     //Leaving the queue
@@ -277,7 +307,7 @@ module.exports = function(io) {
 
 
     socket.on('add-message', function(message){
-      console.log('test');
+      console.log(message);
       var partner = findPartner();
 
       var name = findName();

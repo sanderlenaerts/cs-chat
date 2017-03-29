@@ -7,7 +7,10 @@ import { AuthenticationService } from '../../services/authentication.service';
   template: `
   <div class="chatcontainer">
     <h3>We advise you to first carefully read the self-help section, as this might provide a solution to the issue(s) you may be experiencing.</h3>
-    <chat [messages]="messages" [active]="active" [partner]="partner"></chat>
+
+    <!-- TODO: Output event that saves the user-data -->
+    <user-input (registered)="getCustomerData($event)" *ngIf="!registered && !isLoggedIn"></user-input>
+    <chat *ngIf="registered || isLoggedIn" [messages]="messages" [active]="active" [partner]="partner"></chat>
     <div class="controls" *ngIf="isLoggedIn">
       <section *ngIf="isConnected" [ngClass]="isConnected ? 'divider' : ''">
         <p>People in queue:</p>
@@ -29,7 +32,7 @@ import { AuthenticationService } from '../../services/authentication.service';
         <button *ngIf="active" class="btn danger-btn full-btn" (click)="stopConversation()">Stop conversation</button>
       </section>
     </div>
-    <div *ngIf="!active && !isLoggedIn" class="btn-container">
+    <div *ngIf="!active && !isLoggedIn && registered" class="btn-container">
       <button [ngClass]="{'success-btn': inQueue == false, 'danger-btn': inQueue == true}" (click)="toggleQueue()" class="btn full-btn">{{ inQueue ? 'Leave queue' : 'Start chatting'}}</button>
       <p *ngIf="inQueue">You are currently number {{position}} in queue</p>
     </div>
@@ -50,6 +53,8 @@ export class ChatContainerComponent implements OnInit {
   partner: String;
   amountQueue: Number;
   position: Number;
+  registered: boolean;
+  customer: any;
 
   constructor(private chatService: ChatService, private authenticationService: AuthenticationService){}
 
@@ -58,6 +63,12 @@ export class ChatContainerComponent implements OnInit {
     this.isConnected = false;
     this.inQueue = false;
     this.active = false;
+    this.registered = false;
+  }
+
+  getCustomerData(customer){
+    this.registered = true;
+    this.customer = customer;
   }
 
   startWork(){
@@ -78,7 +89,6 @@ export class ChatContainerComponent implements OnInit {
     if (this.connection !== null){
       this.connection.unsubscribe();
     }
-
   }
 
   nextCustomer(){
@@ -99,7 +109,7 @@ export class ChatContainerComponent implements OnInit {
   toggleQueue(){
     if (!this.inQueue){
       // Create the connection
-      this.connection = this.chatService.joinQueue().subscribe(data => {
+      this.connection = this.chatService.joinQueue(this.customer).subscribe(data => {
         console.log(data);
         this.handleData(data);
 
@@ -116,7 +126,8 @@ export class ChatContainerComponent implements OnInit {
   private handleData(data){
     console.log(data);
     if (data.type == 'start'){
-      this.partner = data.chattingWith;
+      this.partner = data.name;
+      this.customer = data;
       this.active = true;
     }
     else if (data.type == 'new-message'){
