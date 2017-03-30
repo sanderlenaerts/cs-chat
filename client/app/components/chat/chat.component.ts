@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, OnDestroy, Input, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ChatService } from '../../services/chat.service';
 
@@ -6,6 +6,7 @@ import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'chat',
+  encapsulation: ViewEncapsulation.None,
   template: `
     <div class="chatbox" [ngClass]="!isLoggedIn ? 'full-chatbox' : ''">
       <div class="chat-header">
@@ -15,7 +16,8 @@ import { ChatService } from '../../services/chat.service';
         <div class="close-button"><i class="fa fa-times" aria-hidden="true"></i></div>
       </div>
       <div class="chat-content">
-        <p *ngIf="active">You are currently chatting with {{partner}}</p>
+        <p *ngIf="active">You are currently chatting with {{customer.name}}</p>
+        <p *ngIf="active && isLoggedIn">Problem: {{customer.description}}</p>
         <ng-container *ngIf="active">
           <div #messageList class="messages messageList">
             <div class="message employee" *ngFor="let message of messages">
@@ -49,7 +51,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   workActive: boolean;
 
   @Input()
-  partner: String;
+  customer: any;
 
   @Input()
   messages: any [];
@@ -62,7 +64,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   ngOnInit(){
     this.isLoggedIn = this.authenticationService.isLoggedIn();
-    this.active = false;
     this.workActive = false;
   }
 
@@ -76,13 +77,12 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
 
   ngAfterViewChecked(){
-    console.log('After view checked');
     this.scrollToBottom();
   }
 
   scrollToBottom(): void {
       try {
-          console.log('Scrollheight: ', this.myScrollContainer.nativeElement.scrollHeight);
+
           this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
       } catch(err) { }
     }

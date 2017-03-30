@@ -16,11 +16,12 @@
 
 .modal-large
     display: flex
-    position: absolute
+    position: fixed
     background-color: white
     width: 70%
     margin: 0 15%
     z-index: 3
+    top: 10vh
 
     .modal
         width: 100%
@@ -29,6 +30,8 @@
         .modal-content
             padding: 25px
             outline: none
+            height: 70vh
+            overflow-y: scroll
 
             .modal-header
                 h1
@@ -47,11 +50,6 @@
 
                     &:focus
                         outline: 0
-
-
-
-
-
 
 
 .modal-small

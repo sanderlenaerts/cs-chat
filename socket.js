@@ -338,7 +338,7 @@ module.exports = function(io) {
 
     var findName = function(){
       if (clientsInChat.hasOwnProperty(socket.id)){
-        return clientsInChat[socket.id].name;
+        return clientInformation[socket.id].name;
       }
       else {
         if (staffInChat.hasOwnProperty(socket.id)){

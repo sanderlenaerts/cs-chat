@@ -19,6 +19,7 @@ import { UsersComponent } from './components/users.component';
 import { RegisterComponent } from './components/register.component';
 import { ChatcontrolsComponent } from './components/chat/chatcontrols.component';
 import { UserInputComponent } from './components/chat/user-input.component';
+import { SupportFormComponent } from './components/support.component';
 
 // Validators
 import { EmailValidator } from './components/validators/email.validator';
@@ -64,7 +65,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     UsersComponent,
     RegisterComponent,
     ChatcontrolsComponent,
-    UserInputComponent
+    UserInputComponent,
+    SupportFormComponent
   ],
   bootstrap: [ AppComponent ],
   providers: [

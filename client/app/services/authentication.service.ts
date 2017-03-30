@@ -1,5 +1,5 @@
 
-import { Injectable } from '@angular/core';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
@@ -13,6 +13,9 @@ export class AuthenticationService {
     name: '',
     username: ''
   }
+
+  @Output()
+  authChange = new EventEmitter();
 
   constructor(private http: Http){
     this.token = JSON.parse(localStorage.getItem('token'));
@@ -77,7 +80,7 @@ export class AuthenticationService {
     return this.user;
   }
 
-  isLoggedIn(){
+  isLoggedIn() {
     return !!this.token;
   }
 }

@@ -21,6 +21,17 @@ export class ChatService {
     this.socket.emit('match-customer', {});
   }
 
+  sendSupportData(data){
+    // Send request to Express REST API
+
+    let headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    let options = new RequestOptions({ headers: headers });
+
+    return this.http.post('http://localhost:3000/api/mail', JSON.stringify(data), options)
+      .map((response: Response) => response.json())
+  }
+
   getActiveConnection(){
     return this.connection;
   }
