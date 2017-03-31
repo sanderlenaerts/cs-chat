@@ -6,22 +6,21 @@ import { AuthenticationService } from '../services/authentication.service';
 @Component({
   selector: 'public-view',
   template: `
-  <!--<div class="app-container overlay">-->
     <header class="nav-header">
-      <div class="company-logo">
-        <img src="./dist/assets/images/hq.svg" width="84px">
-      </div>
+
       <nav class="navbar">
         <ul>
          <li [routerLinkActive]="['active']" [routerLink]="['/info']" [routerLinkActiveOptions]="{ exact: true }">Self-help</li>
          <li [routerLinkActive]="['active']" [routerLink]="['/live-chat']">Live Chat</li>
         </ul>
       </nav>
+      <div class="company-logo">
+        <img src="./dist/assets/images/hq.svg" width="84px">
+      </div>
     </header>
     <main>
       <router-outlet></router-outlet>
     </main>
-<!--  </div>-->
   `,
   styleUrls: ['./dist/assets/css/public.css']
 })

@@ -5,22 +5,40 @@
 .chatcontainer
   margin: 40px 5%
 
-.controls
+.control-group
+  position: absolute
   width: 25%
   display: inline-block
   box-sizing: border-box
-  position: absolute
-  box-shadow: $shadow-medium
-  padding: 15px
-  background-color: white
 
-  section
-    padding: 25px 0
+  .controls
+    margin-bottom: 25px
+    box-shadow: $shadow-medium
+    padding: 15px
+    background-color: white
 
-  .divider
-    border-bottom: 1px solid lighten($grey-tint, 30%)
+    &:last-child
+      margin-bottom: 0
 
-  p
-    font-size: $font-size-small
-    text-align: center
-    color: $off-black
+    section
+    .divider
+      border-bottom: 1px solid lighten($grey-tint, 30%)
+
+    p
+      margin: 25px 0 0
+      font-size: $font-size-tiny
+      color: $off-black
+      word-wrap: break-word
+
+      i
+        padding-right: 15px
+
+    .chat-data
+      padding: 25px 0
+
+      p
+        margin: 0 0 0
+        margin-bottom: 10px
+
+        &:last-child
+          margin-bottom: 0

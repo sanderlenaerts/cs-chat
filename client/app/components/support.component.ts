@@ -17,15 +17,15 @@ export interface Customer {
   template: `
     <div class="form-wrapper">
       <form *ngIf="!submitted" (ngSubmit)="doSupport()" [formGroup]="support">
-
+        <p>Fields marked with * are required</p>
         <div *ngIf=" support.controls['name'].hasError('maxlength') && support.controls['name'].dirty" class="alert alert-danger">The name cannot be longer than 20 characters</div>
 
-        <label for="name">Name</label>
+        <label for="name">Name<span class="superscript">*</span></label>
         <input required id="name" type="text" name="name" placeholder="Name" [formControl]="support.controls['name']">
 
-        <div *ngIf=" support.controls['type'].hasError('required') && support.controls['type'].dirty" class="alert alert-danger">You have to select a role for this account</div>
+        <div *ngIf=" support.controls['type'].hasError('required') && support.controls['type'].dirty" class="alert alert-danger">You have to select a type for this ticket</div>
 
-        <label for="type">Type of Support</label>
+        <label for="type">Type of Support<span class="superscript">*</span></label>
         <label class="sidelabel">
           <input type="radio" value="wifi" formControlName="type" name="type">
           WiFi
@@ -73,7 +73,7 @@ export interface Customer {
         <label for="solution">Solution</label>
         <textarea id="solution" type="text" name="solution" placeholder="Solution" [formControl]="support.controls['solution']"></textarea>
 
-        <label for="proceed"></label>
+        <label for="proceed">Proceed</label>
         <label class="sidelabel"><input type="checkbox"
         [formControl]="support.controls.proceed.controls.resolve"/>Resolve</label>
 
@@ -92,7 +92,6 @@ export interface Customer {
         <label class="sidelabel"><input type="checkbox"
         [formControl]="support.controls.proceed.controls.fix"/>Break Fix</label>
 
-        <input type="submit" [disabled]="!support.valid" value="End chat"/>
       </form>
     </div>
   `,
@@ -103,11 +102,15 @@ export class SupportFormComponent implements OnInit, OnChanges {
   @Input()
   customer: Customer
 
+  @Input()
+  reset: boolean;
+
+
+
   support: FormGroup;
 
   @Output()
   supportEvent = new EventEmitter();
-
 
   constructor(private authenticationService : AuthenticationService, private fb: FormBuilder){}
 
@@ -121,7 +124,7 @@ export class SupportFormComponent implements OnInit, OnChanges {
         'pebkkac': [''],
         'password': [''],
         'multidevice': ['']
-      }, {validator: this.checkboxRequired}),
+      }),
       location: null,
       room: [null],
       problem: [null],
@@ -136,26 +139,42 @@ export class SupportFormComponent implements OnInit, OnChanges {
         'fix': ['']
       }),
     })
+    this.support.valueChanges.subscribe(data => {
+      //Send the data to the backend
+      console.log("Do support");
+      var obj = {
+        support: data,
+        valid: this.support.valid
+      }
+
+      console.log('Emitting event: ', obj);
+      this.supportEvent.emit(obj);
+    });
   }
 
   ngOnChanges(change: SimpleChanges){
     console.log(change);
-    var customer = change['customer'].currentValue;
-    console.log(customer);
+    if (change.hasOwnProperty('customer')){
+      var customer = change['customer'];
+      console.log(customer);
 
-    if (customer){
-      console.log(customer.name);
-      this.support.patchValue({
-        name: customer.name
-      })
+      if (customer.currentValue){
+        console.log(customer.currentValue.name);
+        this.support.patchValue({
+          name: customer.currentValue.name
+        })
+      }
+    }
+    else if (change.hasOwnProperty('reset')){
+      if (change['reset']){
+        this.support.reset();
+      }
     }
 
-  }
 
-  doSupport(){
-    //Send the data to the backend
-    console.log("Do support");
-    this.supportEvent.emit(this.support.value);
+
+
+
   }
 
   checkboxRequired(group: FormGroup){

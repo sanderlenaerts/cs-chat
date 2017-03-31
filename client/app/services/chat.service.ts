@@ -60,7 +60,7 @@ export class ChatService {
         console.log('connect');
         let userData;
         let type;
-        if (d){
+        if (d !== null){
           userData = d;
           type = "register";
         }
@@ -88,6 +88,10 @@ export class ChatService {
       })
 
       this.socket.on('queue-position', (data) => {
+        observer.next(data);
+      })
+
+      this.socket.on('disableChat', (data) => {
         observer.next(data);
       })
 

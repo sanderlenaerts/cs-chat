@@ -11,29 +11,48 @@ import { AuthenticationService } from '../../services/authentication.service';
 
     <!-- TODO: Output event that saves the user-data -->
     <user-input (registered)="getCustomerData($event)" *ngIf="!registered && !isLoggedIn"></user-input>
-    <chat *ngIf="(registered && active) || isLoggedIn" [messages]="messages" [active]="active" [customer]="customer"></chat>
-    <div class="controls" *ngIf="isLoggedIn">
-      <section *ngIf="isConnected" [ngClass]="isConnected ? 'divider' : ''">
-        <p>People in queue:</p>
-        <p>{{amountQueue}}</p>
-      </section>
-      <section *ngIf="isConnected" class="divider">
-        <button class="btn danger-btn full-btn" (click)="quitWork()">Quit work</button>
-      </section>
-      <section *ngIf="!isConnected" class="divider">
-        <button class="btn success-btn full-btn" (click)="startWork()">Start work</button>
-      </section>
-      <section [ngClass]="((isConnected && (amountQueue > 0)) || (isConnected && active)) ? 'divider' : ''" *ngIf="(isConnected && active)">
-        <p>Chatting with:</p>
-        <p>{{customer.name}}</p>
-        <p>{{customer.ip}}</p>
-      </section>
-      <section *ngIf="isConnected && (amountQueue > 0)  || (isConnected && active)">
-        <button *ngIf="!active" class="btn success-btn full-btn" (click)="nextCustomer()">Next customer</button>
+    <chat *ngIf="(registered && active) || isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner"></chat>
+    <div class="control-group" *ngIf="isLoggedIn">
+      <div class="controls" *ngIf="isConnected && active">
+        <button class="btn danger-btn full-btn" (click)="discardModal.open()" ><i class="fa fa-exclamation" aria-hidden="true"></i>
+Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
+</button>
+      </div>
+      <div class="controls">
+        <section [ngClass]="isConnected ? 'divider' : ''">
+          <button *ngIf="isConnected" class="btn danger-btn full-btn" (click)="quitWork()" [disabled]="active">Quit work</button>
 
-        <button *ngIf="active" class="btn danger-btn full-btn" (click)="ticketSent ?  deleteModal.open() : detailsModal.open()" >Stop conversation</button>
-      </section>
+          <button *ngIf="!isConnected" class="btn success-btn full-btn" (click)="startWork()">Start work</button>
+        </section>
+        <section *ngIf="isConnected">
+          <p><i class="fa fa-th-list" aria-hidden="true"></i>
+{{amountQueue}} waiting</p>
+        </section>
+      </div>
+      <div class="controls" *ngIf="active && isConnected">
+        <section>
+            <button class="btn success-btn full-btn"
+            (click)="detailsModal.open()">Ticket</button>
+        </section>
+        <section [ngClass]="((isConnected && (amountQueue > 0)) || isConnected) ? 'divider' : ''" *ngIf="isConnected">
+          <div class="chat-data">
+            <p><i class="fa fa-user-circle-o" aria-hidden="true"></i>
+  {{partner.name}}</p>
+            <p><i class="fa fa-plug" aria-hidden="true"></i>
+  {{partner.ip}}</p>
+            <p><i class="fa fa-envelope" aria-hidden="true"></i>
+          {{partner.email}}</p>
+          </div>
+        </section>
+        <section *ngIf="isConnected && (amountQueue > 0)  || isConnected ">
+          <button class="btn danger-btn full-btn" (click)="ticket.valid ? deleteModal.open() : detailsModal.open()" >Stop conversation</button>
+        </section>
+      </div>
+      <div class="controls" *ngIf="isConnected && (amountQueue > 0) && !active">
+        <button class="btn success-btn full-btn" (click)="nextCustomer()">Next customer</button>
+      </div>
     </div>
+
     <div *ngIf="!active && !isLoggedIn && registered" class="btn-container">
       <button [ngClass]="{'success-btn': inQueue == false, 'danger-btn': inQueue == true}" (click)="toggleQueue()" class="btn full-btn">{{ inQueue ? 'Leave queue' : 'Start chatting'}}</button>
       <p *ngIf="inQueue">You are currently number {{position}} in queue</p>
@@ -51,7 +70,7 @@ import { AuthenticationService } from '../../services/authentication.service';
     </modal-header>
 
      <modal-content class="user-details">
-        <support-form (supportEvent)="sendSupportData($event)" [customer]="customer"></support-form>
+        <support-form (supportEvent)="sendSupportData($event)" [reset]="reset" [customer]="partner"></support-form>
      </modal-content>
   </modal>
 
@@ -63,9 +82,23 @@ import { AuthenticationService } from '../../services/authentication.service';
          [closeOnOutsideClick]="false">
 
      <modal-content class="user-details">
-       <p>Are you sure you want to termnate the chat session</p>
-       <button (click)="deleteModal.close();terminateChat()" class="danger-button"><i class="fa fa-check"></i> Delete</button>
+       <p>Are you sure you want to terminate the chat session</p>
+       <button (click)="deleteModal.close();terminateChat()" class="danger-button"><i class="fa fa-check"></i> Terminate</button>
        <button (click)="deleteModal.close()"><i class="fa fa-times"></i> Cancel </button>
+     </modal-content>
+  </modal>
+
+  <modal  #discardModal
+         title=""
+         class="modal modal-small"
+         [hideCloseButton]="true"
+         [closeOnEscape]="false"
+         [closeOnOutsideClick]="false">
+
+     <modal-content class="user-details">
+       <p>Are you sure you want to discard the chat session? This will disconnect the customer and no ticket can be saved.</p>
+       <button (click)="discardModal.close();discardChat()" class="danger-button"><i class="fa fa-check"></i> Discard chat</button>
+       <button (click)="discardModal.close()"><i class="fa fa-times"></i> Cancel </button>
      </modal-content>
   </modal>
 
@@ -87,15 +120,23 @@ import { AuthenticationService } from '../../services/authentication.service';
 export class ChatContainerComponent implements OnInit {
   connection: any;
   isLoggedIn: boolean;
+  reset: boolean = false;
   isConnected: boolean;
   messages: any[] = [];
   inQueue: boolean;
   active: boolean;
+  chatDisabled: boolean;
   amountQueue: Number;
   position: Number;
   registered: boolean;
   customer: any;
-  ticketSent: boolean;
+  partner: any;
+  ticket =  {
+    support: {},
+    valid: false,
+    chat: []
+  };
+
 
 
 
@@ -106,6 +147,7 @@ export class ChatContainerComponent implements OnInit {
     this.isConnected = false;
     this.inQueue = false;
     this.active = false;
+    this.chatDisabled = false;
     this.registered = false;
   }
 
@@ -123,9 +165,14 @@ export class ChatContainerComponent implements OnInit {
   }
 
   quitWork(){
-    this.stopConversation();
-    this.connection.unsubscribe();
-    this.isConnected = false;
+    if (!this.active){
+      this.chatService.stopConversation();
+      this.connection.unsubscribe();
+      this.isConnected = false;
+      this.active = false;
+      this.messages = [];
+    }
+
   }
 
   ngOnDestroy(){
@@ -136,17 +183,22 @@ export class ChatContainerComponent implements OnInit {
 
   nextCustomer(){
     this.chatService.nextCustomer();
-  }
-
-  stopConversation(){
-
+    this.chatDisabled = false;
   }
 
   terminateChat(){
     //Clear the chat
+
     this.messages = [];
     this.active = false;
     this.chatService.stopConversation();
+
+    //Send the form data
+    this.chatService.sendSupportData(this.ticket).subscribe(data => {
+      // TODO: Success messages
+      // TODO: Reset the form
+      this.reset = !this.reset;
+    })
   }
 
   toggleQueue(){
@@ -168,23 +220,21 @@ export class ChatContainerComponent implements OnInit {
 
   sendSupportData(supportForm){
     var data = {
-      support: supportForm,
-      chat: this.messages
+      support: supportForm.support,
+      chat: this.messages,
+      valid: supportForm.valid
     }
-    console.log('test');
-
-    //TODO: Move this inside the success from observable
-    this.ticketSent = true;
-    this.chatService.sendSupportData(data).subscribe(data => {
-      // TODO: Success messages
-      // TODO: Open modal that asks if they're sure to end the chat
-    })
+    if(this.partner){
+      data.support.email = this.partner.email;
+      console.log(data.support.email);
+    }
+    this.ticket = data;
   }
 
   private handleData(data){
     console.log(data);
     if (data.type == 'start'){
-      this.customer = data;
+      this.partner = data;
       console.log('setting active');
       this.active = true;
     }
@@ -206,6 +256,9 @@ export class ChatContainerComponent implements OnInit {
     }
     else if (data.type == 'queue-position'){
       this.position = data.position;
+    }
+    else if (data.type == 'disableChat'){
+      this.chatDisabled = true;
     }
   }
 }

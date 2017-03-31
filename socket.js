@@ -24,7 +24,7 @@ module.exports = function(io) {
 
     //register the user in a list of either clients or staff
     socket.on('data', function(data){
-      console.log(data);
+      console.log("Registering user: ", data);
 
       if (data.type == "auth"){
         // logged in user
@@ -44,7 +44,6 @@ module.exports = function(io) {
 
         // Push it to the queue
         queue.push(socket.id);
-        console.log(queue);
 
         //TODO: Change structure so it is an array of objects instead of array of socket ids
         var obj = new Object();
@@ -87,7 +86,6 @@ module.exports = function(io) {
         // Get the socket id from the first person in the queue and remove it
         obj.partner = queue.shift();
 
-        console.log('staff: ', staff);
         // Add the socket id to the partner property of a staff member in chat
         obj.name = staff[socket.id].name;
         staffInChat[socket.id] = obj;
@@ -110,7 +108,6 @@ module.exports = function(io) {
 
         var clientInfo = clientInformation[obj.partner];
 
-        console.log(clientInfo);
         clientInfo.type = 'start';
 
         var newObj = {
@@ -180,7 +177,10 @@ module.exports = function(io) {
     }
 
     var removeStaff = function(){
+      console.log('Deleting staff: ', staff);
       delete staff[socket.id];
+      console.log('Deleted staff: ', staff);
+
     }
 
     var isClient = function(){
@@ -201,7 +201,13 @@ module.exports = function(io) {
 
     socket.on('stop-chat', function(data){
       // When manually stopping the chat
+      console.log('Staff before quit: ', staff);
+      console.log('Staff in chat before quit: ', staffInChat);
+
       deleteConversationTraces();
+
+      console.log('Staff after quit: ', staff);
+      console.log('Staff in chat after quit: ', staffInChat);
     })
 
     var stopConversationByClient = function(){
@@ -215,7 +221,7 @@ module.exports = function(io) {
       // Now we can safely delete it from the the staff in chat object
       delete staffInChat[staffId];
 
-      endConversation(staffId);
+      disableChat(staffId);
       updateQueueAmount();
     }
 
@@ -265,8 +271,16 @@ module.exports = function(io) {
       }
     }
 
+    var disableChat = function(id){
+      console.log('disableChat');
+      if (io.sockets.connected.hasOwnProperty(id)) {
+        console.log('Has property so should emit');
+        io.sockets.connected[id].emit('disableChat',{type: 'disableChat'});
+      }
+    }
+
     var endConversation = function(id){
-      if (io.sockets.connected[id]) {
+      if (io.sockets.connected.hasOwnProperty(id)) {
         io.sockets.connected[id].emit('endConversation',{type: 'endConversation'});
       }
     }
@@ -307,11 +321,9 @@ module.exports = function(io) {
 
 
     socket.on('add-message', function(message){
-      console.log(message);
       var partner = findPartner();
 
       var name = findName();
-      console.log("From: ", name);
 
       if (io.sockets.connected[partner]) {
         io.sockets.connected[partner].emit('message',{type:'new-message', text: message, from: name});
@@ -321,14 +333,12 @@ module.exports = function(io) {
 
     var updateCustomerQueuePosition = function(){
       for (i = 0; i < queue.length; i++) {
-        console.log(queue[i]);
         sendPositionInQueue(queue[i]);
       }
 
     }
 
     var sendPositionInQueue = function(id){
-      console.log('Sending position');
       var index = queue.indexOf(id);
       var position = index + 1;
       if (io.sockets.connected[id]) {
