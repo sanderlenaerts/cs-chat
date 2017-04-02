@@ -33,6 +33,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(expressValidator([]));
 
 app.use(passport.initialize());
+//app.use(passport.session());
 
 
 app.use('/api', require('./routes/api/routes'));

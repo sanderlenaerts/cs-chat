@@ -3,8 +3,8 @@ var router = require('express').Router();
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var jwt = require('jwt-simple');
-var config = require('../../config');
 var passport = require('passport');
+var config = require('../../config');
 var expressValidator = require('express-validator');
 var util = require('util');
 
@@ -17,7 +17,7 @@ var loginschema = {
     },
     matches: {
       options: [{min: 3, max: 10}],
-      errorMessage: "Password must be between 6 and 30 characters" // pass options to the validator with the options property as an array
+      errorMessage: "Password must be between 3 and 10 characters" // pass options to the validator with the options property as an array
       // options: [/example/i] // matches also accepts the full expression in the first parameter
     }
   },
@@ -28,7 +28,7 @@ var loginschema = {
     },
     matches: {
       options: [{min: 5, max: 10}],
-      errorMessage: "Password must be between 6 and 30 characters" // pass options to the validator with the options property as an array
+      errorMessage: "Password must be between 5 and 10 characters" // pass options to the validator with the options property as an array
       // options: [/example/i] // matches also accepts the full expression in the first parameter
     }
   }
@@ -128,16 +128,13 @@ module.exports.register = function(req, res, next) {
 };
 
 
-module.exports.login = function(req, res) {
+module.exports.login = function(req, res, next) {
 
-  // if(!req.body.email || !req.body.password) {
-  //   sendJSONresponse(res, 400, {
-  //     "message": "All fields required"
-  //   });
-  //   return;
-  // }
+  console.log('Login process');
 
   req.check(loginschema);
+
+  console.log(req.body);
 
   var errors = req.validationErrors();
 
@@ -148,17 +145,22 @@ module.exports.login = function(req, res) {
     passport.authenticate('local', function(err, user, info){
       var token;
 
+      console.log("Passport: ", user);
+
       // If Passport throws/catches an error
       if (err) {
+        console.log(err);
         res.status(404).json(err);
+        console.log('Validation errors');
         return;
+
       }
 
       // If a user is found
       if(user){
+        console.log('User was found');
         token = user.generateJwt();
-        res.status(200);
-        res.json({
+        res.status(200).json({
           "token" : token,
           "username" : user.username,
           "role" : user.role,
@@ -166,8 +168,9 @@ module.exports.login = function(req, res) {
         });
       } else {
         // If user is not found
+        console.log('User not found');
         res.status(401).json(info);
       }
-    })(req, res);
+    })(req, res, next);
   }
 };
