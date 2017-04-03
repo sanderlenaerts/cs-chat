@@ -325,9 +325,11 @@ module.exports = function(io) {
 
       var name = findName();
 
+      var messages = message.split("\n");
+
       if (io.sockets.connected[partner]) {
-        io.sockets.connected[partner].emit('message',{type:'new-message', text: message, from: name});
-        io.sockets.connected[socket.id].emit('message', {type: 'new-message', text: message, from: name});
+        io.sockets.connected[partner].emit('message',{type:'new-message', text: messages, from: name});
+        io.sockets.connected[socket.id].emit('message', {type: 'new-message', text: messages, from: name});
       }
     })
 

@@ -201,7 +201,6 @@ export class ChatContainerComponent implements OnInit {
     //Send the form data
     this.chatService.sendSupportData(this.ticket).subscribe(data => {
       // TODO: Success messages
-      // TODO: Reset the form
       this.reset = !this.reset;
     })
   }
@@ -209,6 +208,7 @@ export class ChatContainerComponent implements OnInit {
   toggleQueue(){
     if (!this.inQueue){
       // Create the connection
+      console.log('joinin the queue');
       this.connection = this.chatService.joinQueue(this.customer).subscribe(data => {
         console.log(data);
         this.handleData(data);
@@ -233,6 +233,7 @@ export class ChatContainerComponent implements OnInit {
     this.chatService.stopConversation();
     this.inQueue = false;
     this.partner = null;
+    this.connection.unsubscribe();
   }
 
   sendSupportData(supportForm){
@@ -261,7 +262,6 @@ export class ChatContainerComponent implements OnInit {
         from: data.from,
         text: data.text
       });
-      console.log(this.messages);
     }
     else if (data.type == 'endConversation'){
       this.inQueue = false;

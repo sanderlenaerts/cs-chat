@@ -2,6 +2,7 @@
 
 import { Component, Input, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'public-view',
@@ -12,10 +13,14 @@ import { AuthenticationService } from '../services/authentication.service';
         <ul>
          <li [routerLinkActive]="['active']" [routerLink]="['/info']" [routerLinkActiveOptions]="{ exact: true }">Self-help</li>
          <li *ngIf="authenticationService.betweenOffice() || authenticated" [routerLinkActive]="['active']" [routerLink]="['/live-chat']">Live Chat</li>
+         <li *ngIf="authenticated && authenticationService.user.role == 'ADMIN'" [routerLinkActive]="['active']" [routerLink]="['/admin']">Admin Panel</li>
         </ul>
       </nav>
       <div class="company-logo">
         <img src="./dist/assets/images/hq.svg" width="84px">
+      </div>
+      <div *ngIf="authenticated" class="logout">
+        <a (click)="logout()">Log out</a>
       </div>
     </header>
     <main>
@@ -28,7 +33,7 @@ import { AuthenticationService } from '../services/authentication.service';
 export class PublicComponent implements OnInit {
   public authenticated: boolean
 
-  constructor(private authenticationService: AuthenticationService){
+  constructor(private authenticationService: AuthenticationService, private router: Router){
     this.authenticated = authenticationService.isLoggedIn();
   }
 
@@ -36,12 +41,10 @@ export class PublicComponent implements OnInit {
     console.log(this.authenticationService.token);
   }
 
-  test(){
-
-  }
-
   logout(){
+    console.log('Logging out');
     this.authenticationService.logout();
     this.authenticated = false;
+    this.router.navigate(['/login']);
   }
 }

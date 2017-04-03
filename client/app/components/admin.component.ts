@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   template: `
   <header class="nav-header">
     <div class="header-container">
-      <div  class="company-logo">
+      <div [routerLink]="['/']" class="company-logo">
         <img src="./dist/assets/images/hq.svg" width="84px">
       </div>
       <h3>Live Chat Admin Panel</h3>

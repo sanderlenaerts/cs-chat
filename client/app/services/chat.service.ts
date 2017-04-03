@@ -37,8 +37,11 @@ export class ChatService {
   }
 
   stopConversation(){
+    console.log('stopping chat');
     this.socket.emit('stop-chat', {});
   }
+
+
 
   sendMessage(message){
     this.socket.emit('add-message', message);
@@ -47,6 +50,10 @@ export class ChatService {
   joinQueue(customer) {
     return this.registerSocket(customer);
 
+  }
+
+  disconnect(){
+    this.socket.disconnect();
   }
 
   private registerSocket(d){

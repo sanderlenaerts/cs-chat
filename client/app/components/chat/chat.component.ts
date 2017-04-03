@@ -25,7 +25,9 @@ import { FocusDirective } from '../../directives/focus.directive';
           <div #messageList class="messages messageList">
             <div class="message employee" *ngFor="let message of messages">
               <h4>{{message.from}}</h4>
-              <p>{{message.text}}</p>
+              <p *ngFor="let content of message.text">
+                {{content}}
+              </p>
             </div>
             <div *ngIf="chatDisabled">
               <p>{{partner.name}} has disconnected from the chat</p>

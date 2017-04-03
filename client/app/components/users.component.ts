@@ -24,7 +24,7 @@ import { UserService } from '../services/user.service';
       <div class="user-role">
         <p>{{user.role}}</p>
       </div>
-      <p class="username">{{user.name}}</p>
+      <p class="username">{{user.name}} ({{user.username}})</p>
       <div class="delete-user" (click)="deleteModal.open()">
         <i class="fa fa-trash"></i>
       </div>

@@ -24,9 +24,6 @@ import { Router } from '@angular/router';
 
       <div class="form-wrapper">
         <h3>Sign in</h3>
-        <div *ngIf="submitted" class="submitted">
-          <p>Your form has been submitted.</p>
-        </div>
         <div *ngIf="submitted" class="dots-loader"></div>
         <div *ngIf="isLoggedIn" class="submitted">
           <p>You are currently logged in as {{user.name}} ({{user.username}}). <a (click)="logout()">Log out</a> if you want to log in with another account.</p>

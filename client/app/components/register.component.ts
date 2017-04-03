@@ -2,6 +2,7 @@
 import { Component, OnInit, style, state, animate, transition, trigger, ViewEncapsulation} from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from '../services/authentication.service';
+import { Router } from '@angular/router';
 
 // RxJS operators
 import 'rxjs/add/operator/map';
@@ -15,9 +16,7 @@ import 'rxjs/add/observable/throw';
   <div class="content-wrapper">
     <div class="form-wrapper">
       <h3>Register new user</h3>
-      <div *ngIf="submitted" class="submitted">
-        <p>Your form has been submitted.</p>
-      </div>
+      <div *ngIf="submitted" class="dots-loader"></div>
       <div *ngIf="errors?.length > 0 && !submitted" class="has-errors">
         <li *ngFor="let error of errors" class="error">
           {{error}}
@@ -68,7 +67,7 @@ export class RegisterComponent implements OnInit {
   errors: String []
   submitted: boolean
 
-  constructor(private fb: FormBuilder, private authenticationService: AuthenticationService){}
+  constructor(private fb: FormBuilder, private authenticationService: AuthenticationService, private router: Router){}
 
 
   ngOnInit(){
@@ -89,6 +88,7 @@ export class RegisterComponent implements OnInit {
             this.errors = [];
             console.log("Data", data);
             //TODO: Success message
+            this.router.navigate(['/admin/users']);
           },
           err => {
             this.submitted = false;
