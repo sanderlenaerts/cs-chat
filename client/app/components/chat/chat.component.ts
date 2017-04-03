@@ -2,11 +2,12 @@ import { Component, ViewEncapsulation, OnInit, OnDestroy, Input, Output, EventEm
 import { AuthenticationService } from '../../services/authentication.service';
 import { ChatService } from '../../services/chat.service';
 
+import { FocusDirective } from '../../directives/focus.directive';
 
+// Simple 'focus' Directive
 
 @Component({
   selector: 'chat',
-  encapsulation: ViewEncapsulation.None,
   template: `
     <div class="chatbox" [ngClass]="!isLoggedIn ? 'full-chatbox' : ''">
       <div class="chat-header">
@@ -35,13 +36,14 @@ import { ChatService } from '../../services/chat.service';
       </div>
       <div class="chat-input" *ngIf="active && !chatDisabled">
         <div>
-          <textarea #text (keydown.enter)="sendMessage();false" rows="2" class="text-input" [(ngModel)]="message" name="message"></textarea>
-          <button class="send-text" type="submit" (click)="sendMessage()">Send <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+          <textarea #text [focus]="inputFocused" (keydown.enter)="sendMessage();false" rows="2" class="text-input" [(ngModel)]="message" name="message"></textarea>
+          <button class="send-text" type="submit" (click)="sendMessage();moveFocus()">Send <i class="fa fa-paper-plane" aria-hidden="true"></i></button>
         </div>
       </div>
     </div>
   `,
   styleUrls: ['./dist/assets/css/chatbox.css']
+
 })
 
 export class ChatComponent implements OnInit, AfterViewChecked {
@@ -69,8 +71,15 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   message: String = '';
 
+  inputFocused: boolean = false;
+
   constructor(private authenticationService : AuthenticationService, private chatService : ChatService){
 
+  }
+
+  moveFocus(){
+    this.inputFocused = true;
+    setTimeout(() => {this.inputFocused = false});
   }
 
   ngOnInit(){

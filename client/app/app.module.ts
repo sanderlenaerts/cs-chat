@@ -40,6 +40,9 @@ import { ActivatedRouteSnapshot } from '@angular/router';
 //Time guard
 import { TimeGuard } from './services/timeguard.service';
 
+// Directives
+import { FocusDirective } from './directives/focus.directive';
+
 // Components
 import { appRouting } from './app.routing';
 import { AuthHttp, AuthConfig } from 'angular2-jwt';
@@ -69,7 +72,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     RegisterComponent,
     ChatcontrolsComponent,
     UserInputComponent,
-    SupportFormComponent
+    SupportFormComponent,
+    FocusDirective
   ],
   bootstrap: [ AppComponent ],
   providers: [
