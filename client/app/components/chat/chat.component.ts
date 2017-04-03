@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit, OnDestroy, Input, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit, OnDestroy, Input, Output, EventEmitter, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
 import { AuthenticationService } from '../../services/authentication.service';
 import { ChatService } from '../../services/chat.service';
 
@@ -13,7 +13,7 @@ import { ChatService } from '../../services/chat.service';
         <div class="inner-chat-header">
           <h3>Live Chat Support</h3>
         </div>
-        <div class="close-button"><i class="fa fa-times" aria-hidden="true"></i></div>
+        <div *ngIf="!isLoggedIn" class="close-button"><i class="fa fa-times" aria-hidden="true" (click)="endConversation()"></i></div>
       </div>
       <div class="chat-content">
         <div class="chat-partner" *ngIf="active">
@@ -64,6 +64,9 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   @Input()
   messages: any [];
 
+  @Output()
+  chatend = new EventEmitter();
+
   message: String = '';
 
   constructor(private authenticationService : AuthenticationService, private chatService : ChatService){
@@ -86,6 +89,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   ngAfterViewChecked(){
     this.scrollToBottom();
+  }
+
+  endConversation(){
+    this.chatend.emit('');
   }
 
   scrollToBottom(): void {

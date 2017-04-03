@@ -11,7 +11,7 @@ import { AuthenticationService } from '../services/authentication.service';
       <nav class="navbar">
         <ul>
          <li [routerLinkActive]="['active']" [routerLink]="['/info']" [routerLinkActiveOptions]="{ exact: true }">Self-help</li>
-         <li [routerLinkActive]="['active']" [routerLink]="['/live-chat']">Live Chat</li>
+         <li *ngIf="authenticationService.betweenOffice() || authenticated" [routerLinkActive]="['active']" [routerLink]="['/live-chat']">Live Chat</li>
         </ul>
       </nav>
       <div class="company-logo">

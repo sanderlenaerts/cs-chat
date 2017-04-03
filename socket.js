@@ -45,7 +45,7 @@ module.exports = function(io) {
         // Push it to the queue
         queue.push(socket.id);
 
-        //TODO: Change structure so it is an array of objects instead of array of socket ids
+
         var obj = new Object();
         obj.name = data.user.name;
         obj.description = data.user.description;

@@ -26,13 +26,17 @@
     h3
       font-size: $font-size-small
       margin: 0
-      padding: 0 0 0 15px
+      padding: 15px 0 15px 15px
 
   .close-button
     padding: 10px
     display: flex
     align-items: center
     background-color: $danger
+
+    &:hover
+      cursor: pointer
+      background-color: lighten($danger, 10%)
     i
       font-size: $font-size-large
 

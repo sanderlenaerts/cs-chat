@@ -5,6 +5,18 @@
 .chatcontainer
   margin: 40px 5%
 
+  .has-errors
+    padding: 15px
+    background-color: $danger
+    margin-bottom: 10px
+
+    .error
+      padding: 0
+      margin: 0
+      color: $off-white
+
+
+
 .control-group
   position: absolute
   width: 25%
@@ -23,9 +35,11 @@
     section
     .divider
       border-bottom: 1px solid lighten($grey-tint, 30%)
+    .padded
+      margin: 25px 0 0
 
     p
-      margin: 25px 0 0
+      margin: 0 0 0
       font-size: $font-size-tiny
       color: $off-black
       word-wrap: break-word

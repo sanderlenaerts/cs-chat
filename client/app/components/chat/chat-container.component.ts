@@ -11,21 +11,23 @@ import { AuthenticationService } from '../../services/authentication.service';
 
     <!-- TODO: Output event that saves the user-data -->
     <user-input (registered)="getCustomerData($event)" *ngIf="!registered && !isLoggedIn"></user-input>
-    <chat *ngIf="(registered && active) || isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner"></chat>
+
+    <chat *ngIf="(registered && active) || isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="endChatConversation($event)"></chat>
+
     <div class="control-group" *ngIf="isLoggedIn">
       <div class="controls" *ngIf="isConnected && active">
         <button class="btn danger-btn full-btn" (click)="discardModal.open()" ><i class="fa fa-exclamation" aria-hidden="true"></i>
 Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
-</button>
+        </button>
       </div>
       <div class="controls">
-        <section [ngClass]="isConnected ? 'divider' : ''">
-          <button *ngIf="isConnected" class="btn danger-btn full-btn" (click)="quitWork()" [disabled]="active">Quit work</button>
+        <section *ngIf="!active">
+          <button *ngIf="isConnected" class="btn danger-btn full-btn" (click)="quitWork()" >Quit work</button>
 
           <button *ngIf="!isConnected" class="btn success-btn full-btn" (click)="startWork()">Start work</button>
         </section>
         <section *ngIf="isConnected">
-          <p><i class="fa fa-th-list" aria-hidden="true"></i>
+          <p [ngClass]="active ? '' : 'padded'"><i class="fa fa-th-list" aria-hidden="true"></i>
 {{amountQueue}} waiting</p>
         </section>
       </div>
@@ -53,6 +55,9 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
       </div>
     </div>
 
+    <div *ngIf="!active && !isLoggedIn && registered && !!partner" class="has-errors">
+      <p class="error">{{partner.name}} has disconnected from the chat
+    </div>
     <div *ngIf="!active && !isLoggedIn && registered" class="btn-container">
       <button [ngClass]="{'success-btn': inQueue == false, 'danger-btn': inQueue == true}" (click)="toggleQueue()" class="btn full-btn">{{ inQueue ? 'Leave queue' : 'Start chatting'}}</button>
       <p *ngIf="inQueue">You are currently number {{position}} in queue</p>
@@ -176,7 +181,7 @@ export class ChatContainerComponent implements OnInit {
   }
 
   ngOnDestroy(){
-    if (this.connection !== null){
+    if (this.connection){
       this.connection.unsubscribe();
     }
   }
@@ -216,6 +221,18 @@ export class ChatContainerComponent implements OnInit {
       this.chatService.leaveQueue();
     }
     this.inQueue = !this.inQueue;
+  }
+
+  discardChat(){
+    this.endChatConversation('');
+  }
+
+  endChatConversation(data){
+    this.messages = [];
+    this.active = false;
+    this.chatService.stopConversation();
+    this.inQueue = false;
+    this.partner = null;
   }
 
   sendSupportData(supportForm){

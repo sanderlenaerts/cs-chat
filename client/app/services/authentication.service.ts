@@ -29,6 +29,16 @@ export class AuthenticationService {
     }
   }
 
+  betweenOffice = function(){
+    var date = new Date();
+    var lower = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 8, 30, 0);
+
+    var upper = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 10, 30, 0);
+
+    // check if the date passed is between these hours
+    return lower <= date && upper >= date;
+  }
+
   register(userData: any): Observable<boolean> {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');

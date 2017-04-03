@@ -37,6 +37,9 @@ import { AuthGuard } from './services/guard.service';
 import { RoleGuard } from './services/roleguard.service';
 import { ActivatedRouteSnapshot } from '@angular/router';
 
+//Time guard
+import { TimeGuard } from './services/timeguard.service';
+
 // Components
 import { appRouting } from './app.routing';
 import { AuthHttp, AuthConfig } from 'angular2-jwt';
@@ -75,6 +78,7 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     AuthGuard,
     RoleGuard,
     UserService,
+    TimeGuard,
     {
       provide: AuthHttp,
       useFactory: authHttpServiceFactory,

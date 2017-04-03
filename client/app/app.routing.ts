@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthGuard } from './services/guard.service';
 import { RoleGuard } from './services/roleguard.service';
+import { TimeGuard } from './services/timeguard.service';
 
 import { PublicComponent } from './components/public.component';
 import { LandingComponent } from './components/landing.component';
@@ -20,7 +21,11 @@ const appRoutes : Routes = [
     children: [
         { path: '', redirectTo: 'info', pathMatch: 'full' },
         { path: 'info',  component: LandingComponent},
-        { path: 'live-chat', component: ChatContainerComponent }
+        {
+          path: 'live-chat',
+          component: ChatContainerComponent,
+          canActivate: [TimeGuard]
+        }
     ]
   },
   {
