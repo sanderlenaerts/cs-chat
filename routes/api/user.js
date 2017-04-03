@@ -14,3 +14,14 @@ module.exports.getUsers = function(req, res, next) {
     }
  })
 };
+
+module.exports.deleteUser = function(req, res, next) {
+  User.remove({username: req.body.username}, function(err) {
+    if (err){
+      next(err);
+    }
+    else {
+      res.status(200).json({message: 'Removed ' + req.body.username + 'from the users'});
+    }
+ })
+};

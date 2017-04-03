@@ -12,6 +12,7 @@ router.post('/login', ctrlAuth.login);
 
 //users
 router.get('/users', ctrlUser.getUsers);
+router.delete('/users', ctrlUser.deleteUser);
 
 //support form
 

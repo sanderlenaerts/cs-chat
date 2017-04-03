@@ -1,7 +1,12 @@
 
-import { Component, OnInit, style, state, animate, transition, trigger, ViewEncapsulation} from '@angular/core';
+import { Component, OnInit, style, state, animate, transition, trigger, ViewEncapsulation, Input} from '@angular/core';
 
 import { UserService } from '../services/user.service';
+import { AuthenticationService } from '../services/authentication.service';
+import { Router } from '@angular/router';
+
+import { SearchPipe } from '../filters/user.filter';
+import { SearchComponent } from './search.component';
 
 @Component({
   selector: 'user-list',
@@ -10,9 +15,7 @@ import { UserService } from '../services/user.service';
 
   <div class="buttons-container">
     <!-- Search -->
-    <div class="search-container">
-      <input type="text" placeholder="Search...">
-    </div>
+    <search (update)="term = $event" class="search-container"></search>
     <div [routerLink]="['/admin/registration']" class="success-button">
       Add new user
     </div>
@@ -20,12 +23,12 @@ import { UserService } from '../services/user.service';
   </div>
   <section class="cards">
     <!-- One user card taking up 50% of the screen -->
-    <article *ngFor="let user of users" class="user-card">
+    <article *ngFor="let user of users | searchFilter: term" class="user-card">
       <div class="user-role">
         <p>{{user.role}}</p>
       </div>
       <p class="username">{{user.name}} ({{user.username}})</p>
-      <div class="delete-user" (click)="deleteModal.open()">
+      <div class="delete-user" (click)="deleteModal.open();selectUser(user.username)">
         <i class="fa fa-trash"></i>
       </div>
     </article>
@@ -41,7 +44,7 @@ import { UserService } from '../services/user.service';
      <modal-content class="user-details">
        <p>Are you sure you want to delete this user?</p>
        <p>This action cannot be reversed!</p>
-       <button (click)="deleteModal.close();" class="danger-button"><i class="fa fa-check"></i> Delete</button>
+       <button (click)="deleteUser(user);deleteModal.close()" class="danger-button"><i class="fa fa-check"></i> Delete</button>
        <button (click)="deleteModal.close()"><i class="fa fa-times"></i> Cancel </button>
      </modal-content>
   </modal>
@@ -63,9 +66,11 @@ import { UserService } from '../services/user.service';
 
 export class UsersComponent implements OnInit {
 
-  users: any[]
+  users: any[] = [];
+  user: String;
 
-  constructor(private userService: UserService){}
+
+  constructor(private userService: UserService, private authenticationService: AuthenticationService, private router: Router){}
 
   ngOnInit(){
     this.userService.getUsers()
@@ -76,5 +81,30 @@ export class UsersComponent implements OnInit {
       err => {
         console.log(err);
       })
+  }
+
+  selectUser(username){
+    this.user = username;
+  }
+
+  deleteUser(username){
+    //delete user
+    this.userService.deleteUser(username).subscribe(data => {
+      console.log('Deleted the user');
+      this.removeUserFromArray(username);
+      if (username == this.authenticationService.user.username){
+        this.authenticationService.logout();
+        this.router.navigate(['/login']);
+      }
+    })
+  }
+
+  removeUserFromArray(username){
+    for (let i = 0; i < this.users.length; i++){
+      if (this.users[i].username == username){
+        this.users.splice(i, 1);
+        break;
+      }
+    }
   }
 }

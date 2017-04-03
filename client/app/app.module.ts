@@ -47,6 +47,10 @@ import { FocusDirective } from './directives/focus.directive';
 import { appRouting } from './app.routing';
 import { AuthHttp, AuthConfig } from 'angular2-jwt';
 
+//Pipes
+import { SearchPipe } from './filters/user.filter';
+import { SearchComponent } from './components/search.component';
+
 function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig(), http, options);
 }
@@ -73,7 +77,9 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     ChatcontrolsComponent,
     UserInputComponent,
     SupportFormComponent,
-    FocusDirective
+    FocusDirective,
+    SearchPipe,
+    SearchComponent
   ],
   bootstrap: [ AppComponent ],
   providers: [
