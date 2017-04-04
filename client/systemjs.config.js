@@ -12,7 +12,10 @@
         'angular2-cookie': 'node_modules/angular2-cookie',
         'ngx-modal': 'node_modules/ngx-modal',
         "angular2-jwt": "node_modules/angular2-jwt",
-        "socket.io-client": "node_modules/socket.io-client/dist/socket.io.js"
+        "socket.io-client": "node_modules/socket.io-client/dist/socket.io.js",
+        '@angular2-material/core': 'node_modules/@angular2-material/core/core.umd.js',
+        '@angular2-material/menu': 'node_modules/@angular2-material/menu/menu.umd.js'
+
     };
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
@@ -42,6 +45,7 @@
             "main": "index.js",
             "defaultExtension": "js"
         }
+
     };
 
     var ngPackageNames = [

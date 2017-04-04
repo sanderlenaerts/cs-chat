@@ -4,12 +4,17 @@
 
 .buttons-container
   display: flex
+  flex-wrap: wrap
   justify-content: space-between
 
   .search-container
     display: inline-block
     margin: 20px
     width: 50%
+
+    @media screen and (max-width: $break-medium)
+      width: 100%
+      display: block
 
   .success-button
     display: inline-block
@@ -20,6 +25,12 @@
     border-radius: 25px
     text-transform: uppercase
     font-size: $font-size-tiny
+
+    @media screen and (max-width: $break-medium)
+      margin-top: 0
+      width: 100%
+      display: block
+      text-align: center
 
     &:hover
       background-color: lighten($success, 10%)
@@ -39,6 +50,9 @@
     width: calc(50% - 50px)
     box-sizing: border-box
     margin: 10px 25px
+
+    @media screen and (max-width: $break-medium)
+      width: calc(100% - 50px)
 
     .delete-user
       font-size: 32px

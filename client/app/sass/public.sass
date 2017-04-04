@@ -2,6 +2,16 @@
 
 .company-logo
   float: left
+.dropdown-btn
+  z-index: 3
+  display: none
+  margin-right: 25px
+
+  &:hover
+    cursor: pointer
+
+  @media screen and (max-width: $break-medium)
+    display: inline-block
 
 header
   display: flex
@@ -21,6 +31,9 @@ header
   &:hover
     cursor: pointer
 
+  @media screen and (max-width: $break-medium)
+    display: none
+
 nav
   display: flex
   justify-content: center
@@ -31,6 +44,9 @@ nav
   position: absolute
   font-weight: bold
   font-size: 1.2rem
+
+  @media screen and (max-width: $break-medium)
+    display: none
 
 
   ul

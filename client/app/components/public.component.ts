@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
   selector: 'public-view',
   template: `
     <header class="nav-header">
-
       <nav class="navbar">
         <ul>
          <li [routerLinkActive]="['active']" [routerLink]="['/info']" [routerLinkActiveOptions]="{ exact: true }">Self-help</li>
@@ -21,6 +20,10 @@ import { Router } from '@angular/router';
       </div>
       <div *ngIf="authenticated" class="logout">
         <a (click)="logout()">Log out</a>
+      </div>
+      <div class="dropdown-btn">
+        <i class="fa fa-bars dropdown-icon" aria-hidden="true" onclick="triggerDropdown()"></i>
+        <dropdown (disconnect)="signOut($event)" [connected]="authenticated"></dropdown>
       </div>
     </header>
     <main>
@@ -39,6 +42,10 @@ export class PublicComponent implements OnInit {
 
   ngOnInit(){
     console.log(this.authenticationService.token);
+  }
+
+  signOut(connected){
+    this.logout();
   }
 
   logout(){

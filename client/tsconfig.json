@@ -10,6 +10,9 @@
     "noImplicitAny": false,
     "outDir": "dist"
   },
+  "types": [
+    "hammerjs"
+  ],
   "exclude": [
     "typings/main",
     "typings/main.d.ts",

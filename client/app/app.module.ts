@@ -1,3 +1,4 @@
+//import 'hammerjs';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -7,6 +8,7 @@ import { Injectable } from '@angular/core';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs';
 import { ModalModule } from 'ngx-modal';
+import {OVERLAY_PROVIDERS} from "@angular2-material/core";
 
 // Custom Components
 import { PublicComponent } from './components/public.component';
@@ -20,6 +22,7 @@ import { RegisterComponent } from './components/register.component';
 import { ChatcontrolsComponent } from './components/chat/chatcontrols.component';
 import { UserInputComponent } from './components/chat/user-input.component';
 import { SupportFormComponent } from './components/support.component';
+import { DropdownComponent } from './components/dropdown.component';
 
 // Validators
 import { EmailValidator } from './components/validators/email.validator';
@@ -51,6 +54,10 @@ import { AuthHttp, AuthConfig } from 'angular2-jwt';
 import { SearchPipe } from './filters/user.filter';
 import { SearchComponent } from './components/search.component';
 
+import {MdMenuModule} from '@angular2-material/menu';
+
+export class MyAppModule {}
+
 function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig(), http, options);
 }
@@ -79,7 +86,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     SupportFormComponent,
     FocusDirective,
     SearchPipe,
-    SearchComponent
+    SearchComponent,
+    DropdownComponent
   ],
   bootstrap: [ AppComponent ],
   providers: [

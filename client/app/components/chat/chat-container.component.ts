@@ -12,7 +12,7 @@ import { AuthenticationService } from '../../services/authentication.service';
     <!-- TODO: Output event that saves the user-data -->
     <user-input (registered)="getCustomerData($event)" *ngIf="!registered && !isLoggedIn"></user-input>
 
-    <chat *ngIf="(registered && active) || isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="endChatConversation($event)"></chat>
+    <chat class="chat" *ngIf="(registered && active) || isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="endChatConversation($event)"></chat>
 
     <div class="control-group" *ngIf="isLoggedIn">
       <div class="controls" *ngIf="isConnected && active">
