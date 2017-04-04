@@ -23,11 +23,16 @@ import { FocusDirective } from '../../directives/focus.directive';
         </div>
         <ng-container *ngIf="active">
           <div #messageList class="messages messageList">
-            <div class="message employee" *ngFor="let message of messages">
-              <h4>{{message.from}}</h4>
-              <p *ngFor="let content of message.text">
-                {{content}}
-              </p>
+            <div class="message employee" *ngFor="let message of messages" >
+              <div [ngClass]="message.from == partner.name ? 'received' : 'sent'">
+                <h4>{{message.from}}</h4>
+                <div class="message-group">
+                  <p *ngFor="let content of message.text">
+                    <span>{{content}}</span>
+                  </p>
+                </div>
+
+              </div>
             </div>
             <div *ngIf="chatDisabled">
               <p>{{partner.name}} has disconnected from the chat</p>

@@ -80,20 +80,36 @@
     .message
       margin-top: 10px
 
+      .message-group
+        display: inline-block
+        border-radius: 1.3em
+        color: $off-white
+        padding: 6px 12px
+      h4
+        color: $grey-tint
+
       h4, p
         margin: 0
         padding: 0
+        font-size: 0.8em
 
       p
-        color: $off-black
+        text-align: left
 
-    .employee
-      h4
-        color: $social-blue
 
-    .customer
-      h4
-        color: $danger
+        span
+          display: inline-block
+
+    .received
+      .message-group
+        border-top-left-radius: 0.3em
+        background-color: $social-blue
+
+    .sent
+      text-align: right
+      .message-group
+        border-top-right-radius: 0.3em
+        background-color: $success
 
 .chat-input
   div
