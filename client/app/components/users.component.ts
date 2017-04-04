@@ -28,47 +28,21 @@ import { SearchComponent } from './search.component';
         <p>{{user.role}}</p>
       </div>
       <p class="username">{{user.name}} ({{user.username}})</p>
-      <div class="delete-user" (click)="deleteModal.open();selectUser(user.username)">
-        <i class="fa fa-trash"></i>
+      <div class="update-user" [routerLink]="['/admin/user', user.username]">
+        <i class="fa fa-pencil" aria-hidden="true"></i>
       </div>
     </article>
 
   </section>
-  <modal  #deleteModal
-         title=""
-         class="modal modal-small"
-         [hideCloseButton]="true"
-         [closeOnEscape]="false"
-         [closeOnOutsideClick]="false">
 
-     <modal-content class="user-details">
-       <p>Are you sure you want to delete this user?</p>
-       <p>This action cannot be reversed!</p>
-       <button (click)="deleteUser(user);deleteModal.close()" class="danger-button"><i class="fa fa-check"></i> Delete</button>
-       <button (click)="deleteModal.close()"><i class="fa fa-times"></i> Cancel </button>
-     </modal-content>
-  </modal>
 
   `,
-  styleUrls: ['./dist/assets/css/userlist.css'],
-  animations: [
-        trigger('fadeInOut', [
-            transition(':enter', [   // :enter is alias to 'void => *'
-                style({ opacity: 0 }),
-                animate(250, style({ opacity: 1 }))
-            ]),
-            transition(':leave', [   // :leave is alias to '* => void'
-                animate(250, style({ opacity: 0 }))
-            ])
-        ])
-    ]
+  styleUrls: ['./dist/assets/css/userlist.css']
 })
 
 export class UsersComponent implements OnInit {
 
   users: any[] = [];
-  user: String;
-
 
   constructor(private userService: UserService, private authenticationService: AuthenticationService, private router: Router){}
 
@@ -83,28 +57,4 @@ export class UsersComponent implements OnInit {
       })
   }
 
-  selectUser(username){
-    this.user = username;
-  }
-
-  deleteUser(username){
-    //delete user
-    this.userService.deleteUser(username).subscribe(data => {
-      console.log('Deleted the user');
-      this.removeUserFromArray(username);
-      if (username == this.authenticationService.user.username){
-        this.authenticationService.logout();
-        this.router.navigate(['/login']);
-      }
-    })
-  }
-
-  removeUserFromArray(username){
-    for (let i = 0; i < this.users.length; i++){
-      if (this.users[i].username == username){
-        this.users.splice(i, 1);
-        break;
-      }
-    }
-  }
 }

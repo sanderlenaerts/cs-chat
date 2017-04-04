@@ -44,7 +44,7 @@ export class AuthenticationService {
     headers.append('Content-Type', 'application/json');
     let options = new RequestOptions({ headers: headers });
 
-    return this.http.post('http://localhost:3000/api/register', JSON.stringify(userData), options)
+    return this.http.post('http://localhost:3000/api/register', userData, options)
       .map((response: Response) => response.json())
   }
 

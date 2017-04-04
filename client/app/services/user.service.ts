@@ -1,6 +1,6 @@
 
 import { Injectable } from '@angular/core';
-import { Http, Headers, Response, RequestOptions } from '@angular/http';
+import { Http, Headers, Response, RequestOptions, URLSearchParams } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
@@ -13,6 +13,38 @@ export class UserService {
 
   getUsers(){
     return this.http.get('http://localhost:3000/api/users')
+      .map((response: Response) => response.json())
+  }
+
+  updateUser(username, data){
+    let updated = {
+      username: username,
+      name: data.name,
+      role: data.role
+    }
+
+
+
+    console.log('User fields to udpate:' , data);
+
+    let headers = new Headers({ 'Content-Type': 'application/json' });
+    let options = new RequestOptions({ headers: headers });
+
+
+    return this.http.put('/api/user/' + username, updated, headers).map((res: Response) => res.json());
+  }
+
+
+
+  getUser(username){
+
+    let params: URLSearchParams = new URLSearchParams();
+    params.set('username', username);
+
+    let requestOptions = new RequestOptions();
+    requestOptions.search = params;
+
+    return this.http.get('http://localhost:3000/api/user', requestOptions)
       .map((response: Response) => response.json())
   }
 

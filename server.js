@@ -27,8 +27,8 @@ var port = process.env.PORT || 3000;
 app.set('views', path.join(__dirname, 'views'));
 
 //body parser
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(expressValidator([]));
 

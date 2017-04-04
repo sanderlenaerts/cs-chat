@@ -23,6 +23,7 @@ import { ChatcontrolsComponent } from './components/chat/chatcontrols.component'
 import { UserInputComponent } from './components/chat/user-input.component';
 import { SupportFormComponent } from './components/support.component';
 import { DropdownComponent } from './components/dropdown.component';
+import { UpdateUserComponent } from './components/update-user.component';
 
 // Validators
 import { EmailValidator } from './components/validators/email.validator';
@@ -87,7 +88,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     FocusDirective,
     SearchPipe,
     SearchComponent,
-    DropdownComponent
+    DropdownComponent,
+    UpdateUserComponent
   ],
   bootstrap: [ AppComponent ],
   providers: [

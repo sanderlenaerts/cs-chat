@@ -13,6 +13,8 @@ router.post('/login', ctrlAuth.login);
 //users
 router.get('/users', ctrlUser.getUsers);
 router.delete('/users', ctrlUser.deleteUser);
+router.get ('/user', ctrlUser.getUser);
+router.put('/user/:username', ctrlUser.updateUser);
 
 //support form
 

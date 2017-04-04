@@ -14,6 +14,8 @@ import { AdminComponent } from './components/admin.component';
 import { UsersComponent } from './components/users.component';
 import { RegisterComponent } from './components/register.component';
 
+import { UpdateUserComponent } from './components/update-user.component';
+
 const appRoutes : Routes = [
   {
     path: '',
@@ -39,12 +41,14 @@ const appRoutes : Routes = [
     children: [
         { path: '', redirectTo: 'users', pathMatch: 'full' },
         { path: 'users',  component: UsersComponent},
-        { path: 'registration', component: RegisterComponent }
+        { path: 'registration', component: RegisterComponent },
+        { path: 'user/:username', component: UpdateUserComponent }
     ],
     data: {
       roles: ['ADMIN']
     }
-  }
+  },
+
 ];
 
 export const appRouting : ModuleWithProviders = RouterModule.forRoot(appRoutes);
