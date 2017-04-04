@@ -224,15 +224,19 @@ export class ChatContainerComponent implements OnInit {
   }
 
   discardChat(){
-    this.endChatConversation('');
+    this.stopChat();
   }
 
-  endChatConversation(data){
+  stopChat(){
     this.messages = [];
     this.active = false;
     this.chatService.stopConversation();
     this.inQueue = false;
     this.partner = null;
+  }
+
+  endChatConversation(data){
+    this.stopChat();
     this.connection.unsubscribe();
   }
 
