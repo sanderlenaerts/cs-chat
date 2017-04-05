@@ -48,8 +48,8 @@ import 'rxjs/add/observable/throw';
 
         <label for="role">Role</label>
         <select id="role" required name="role" [formControl]="register.controls['role']">
-          <option selected value="user">User</option>
-          <option value="admin">Admin</option>
+          <option selected value="USER">User</option>
+          <option value="ADMIN">Admin</option>
         </select>
 
         <input type="submit" [disabled]="!register.valid" value="Register new user">
@@ -76,7 +76,7 @@ export class RegisterComponent implements OnInit {
       username: [null, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(10)])],
       name: [null, Validators.compose([Validators.required, Validators.minLength(6), Validators.maxLength(20)])],
       password: [null, Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(10)])],
-      role: ['User', Validators.required]
+      role: ['USER', Validators.required]
     })
   }
 
@@ -87,6 +87,7 @@ export class RegisterComponent implements OnInit {
           data => {
             this.errors = [];
             console.log("Data", data);
+            
             //TODO: Success message
             this.router.navigate(['/admin/users']);
           },
