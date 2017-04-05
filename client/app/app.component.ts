@@ -38,10 +38,8 @@ export class AppComponent implements OnInit {
   }
 
   constructor(private authenticationService: AuthenticationService, private router: Router){
-    
     authenticationService.changeEmitted$.subscribe(
         authenticated => {
-            console.log(authenticated);
             this.authenticated = authenticated;
     });
   }
@@ -51,9 +49,8 @@ export class AppComponent implements OnInit {
   }
 
   logout(){
-    console.log('Logging out');
     this.authenticationService.logout();
-    this.authenticated = false;
+    //TODO: change logout into observable so "navigate" can be part of success
     this.router.navigate(['/login']);
   }
 }
