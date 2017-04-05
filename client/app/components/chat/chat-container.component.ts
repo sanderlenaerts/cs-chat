@@ -2,6 +2,8 @@ import { Component, ViewEncapsulation, Output, OnInit, OnDestroy, trigger, trans
 import { ChatService } from '../../services/chat.service';
 import { AuthenticationService } from '../../services/authentication.service';
 
+import { Ticket } from '../../models/ticket';
+
 @Component({
   selector: 'chat-container',
   encapsulation: ViewEncapsulation.None,
@@ -125,7 +127,10 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
 export class ChatContainerComponent implements OnInit {
   connection: any;
   isLoggedIn: boolean;
+
+  //TODO: Look into changing it into an observable
   reset: boolean = false;
+
   isConnected: boolean;
   messages: any[] = [];
   inQueue: boolean;
@@ -136,11 +141,7 @@ export class ChatContainerComponent implements OnInit {
   registered: boolean;
   customer: any;
   partner: any;
-  ticket =  {
-    support: {},
-    valid: false,
-    chat: []
-  };
+  ticket: Ticket;
 
 
 
