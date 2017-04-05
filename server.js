@@ -43,6 +43,7 @@ app.use(cors());
 
 app.use(function(err, req, res, next) {
   // Only handles `next(err)` calls
+  console.log(err);
   res.status(err.status || 500);
   res.send({message: err.message});
 });

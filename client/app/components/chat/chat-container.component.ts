@@ -193,14 +193,16 @@ export class ChatContainerComponent implements OnInit {
 
   terminateChat(){
     //Clear the chat
-
+    console.log('clearing the chat');
     this.messages = [];
     this.active = false;
     this.chatService.stopConversation();
 
     //Send the form data
+    console.log('Ticket: ', this.ticket);
     this.chatService.sendSupportData(this.ticket).subscribe(data => {
       // TODO: Success messages
+      console.log('ticket sent: ', this.ticket);
       this.reset = !this.reset;
     })
   }
@@ -246,6 +248,7 @@ export class ChatContainerComponent implements OnInit {
       chat: this.messages,
       valid: supportForm.valid
     }
+    console.log(this.messages);
     if(this.partner){
       data.support.email = this.partner.email;
       console.log(data.support.email);

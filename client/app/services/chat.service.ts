@@ -22,6 +22,7 @@ export class ChatService {
   }
 
   sendSupportData(data){
+    console.log('ticket: ', data);
     // Send request to Express REST API
 
     let headers = new Headers();
