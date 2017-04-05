@@ -12,7 +12,7 @@ import { AuthenticationService } from '../../services/authentication.service';
     <!-- TODO: Output event that saves the user-data -->
     <user-input (registered)="getCustomerData($event)" *ngIf="!registered && !isLoggedIn"></user-input>
 
-    <chat class="chat" *ngIf="(registered && active) || isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="endChatConversation($event)"></chat>
+    <chat class="chat" *ngIf="(registered && active) || isLoggedIn" [isLoggedIn]="isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="endChatConversation($event)"></chat>
 
     <div class="control-group" *ngIf="isLoggedIn">
       <div class="controls" *ngIf="isConnected && active">
@@ -145,10 +145,17 @@ export class ChatContainerComponent implements OnInit {
 
 
 
-  constructor(private chatService: ChatService, private authenticationService: AuthenticationService){}
+  constructor(private chatService: ChatService, private authenticationService: AuthenticationService){
+    authenticationService.changeEmitted$.subscribe(
+        authenticated => {
+            this.isLoggedIn = authenticated;
+     });
+  }
 
   ngOnInit(){
     this.isLoggedIn = this.authenticationService.isLoggedIn();
+
+    //TODO: Change to observable (like authenticated)
     this.isConnected = false;
     this.inQueue = false;
     this.active = false;

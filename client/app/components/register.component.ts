@@ -57,8 +57,7 @@ import 'rxjs/add/observable/throw';
     </div>
   </div>
   `,
-  styleUrls: ['./dist/assets/css/registration.css'],
-
+  styleUrls: ['./dist/assets/css/registration.css']
 })
 
 export class RegisterComponent implements OnInit {

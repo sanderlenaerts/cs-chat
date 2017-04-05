@@ -56,16 +56,19 @@ import { FocusDirective } from '../../directives/focus.directive';
 export class ChatComponent implements OnInit, AfterViewChecked {
 
   @ViewChild('messageList') private myScrollContainer: ElementRef;
-  isLoggedIn: boolean
-
   @ViewChild('textarea') text: ElementRef;
+
+  @Input()
+  isLoggedIn: boolean
+  message: String = '';
+  inputFocused: boolean = false;
+  workActive: boolean;
 
   @Input()
   active: boolean;
 
   @Input()
   chatDisabled: boolean;
-  workActive: boolean;
 
   @Input()
   partner: any
@@ -75,10 +78,6 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   @Output()
   chatend = new EventEmitter();
-
-  message: String = '';
-
-  inputFocused: boolean = false;
 
   constructor(private authenticationService : AuthenticationService, private chatService : ChatService){
 
@@ -90,7 +89,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   }
 
   ngOnInit(){
-    this.isLoggedIn = this.authenticationService.isLoggedIn();
+    //this.isLoggedIn = this.authenticationService.isLoggedIn();
     this.workActive = false;
   }
 
@@ -113,8 +112,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   scrollToBottom(): void {
       try {
-
           this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
-      } catch(err) { }
+      } 
+      catch(err) { 
+
+      }
     }
 }

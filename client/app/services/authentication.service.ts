@@ -3,6 +3,8 @@ import { Injectable, Output, EventEmitter } from '@angular/core';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
+import { Subject } from 'rxjs/Subject';
+
 
 @Injectable()
 export class AuthenticationService {
@@ -27,6 +29,16 @@ export class AuthenticationService {
         username: ''
       }
     }
+  }
+  // Observable string sources
+  private authenticateChange = new Subject<any>();
+
+  // Observable string streams
+  changeEmitted$ = this.authenticateChange.asObservable();
+
+  // Service message commands
+  changeAuthenticated(change: any) {
+      this.authenticateChange.next(change);
   }
 
   betweenOffice = function(){
@@ -85,6 +97,7 @@ export class AuthenticationService {
       username: ''
     }
     localStorage.removeItem('user');
+    this.changeAuthenticated(false);
   }
 
   currentUser(){

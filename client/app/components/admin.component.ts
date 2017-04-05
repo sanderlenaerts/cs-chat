@@ -1,25 +1,15 @@
-import { Component, Input, OnInit, style, state, animate, transition, trigger, ViewEncapsulation} from '@angular/core';
-import { AuthenticationService } from '../services/authentication.service';
+import { Component, OnInit} from '@angular/core';
 
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'admin-page',
   template: `
-  <header class="nav-header">
-    <div class="header-container">
-      <div [routerLink]="['/']" class="company-logo">
-        <img src="./dist/assets/images/hq.svg" width="84px">
-      </div>
-      <h3>Live Chat Admin Panel</h3>
-      <a [class.hidden]="!authenticated" (click)="logout()">Log out</a>
-    </div>
-    <div class="inner-nav">
-      <ul>
-        <li [routerLinkActive]="['active']" [routerLink]="['/admin/users']">Users</li>
-      </ul>
-    </div>
-  </header>
+  
+  <div class="inner-nav">
+    <ul>
+      <li [routerLinkActive]="['active']" [routerLink]="['/admin/users']">Users</li>
+    </ul>
+  </div>
   <main>
     <router-outlet></router-outlet>
   </main>
@@ -29,19 +19,8 @@ import { Router } from '@angular/router';
 
 export class AdminComponent implements OnInit {
 
-  public authenticated: boolean
+  constructor(){}
 
-  constructor(private authenticationService : AuthenticationService, private router: Router){
-    this.authenticated = this.authenticationService.isLoggedIn();
-  }
-
-  ngOnInit(){
-
-  }
-
-  logout(){
-    this.authenticationService.logout();
-    this.authenticated = false;
-    this.router.navigate(['/login']);
-  }
+  ngOnInit(){}
+  
 }

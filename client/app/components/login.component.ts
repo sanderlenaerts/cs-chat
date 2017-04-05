@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -66,12 +66,19 @@ export class LoginComponent implements OnInit {
   submitted: boolean
   isLoggedIn: boolean
   user: any
+  @Output()
+  loginSuccess = new EventEmitter(); 
 
   constructor(private authenticationService: AuthenticationService, private fb: FormBuilder, private router: Router){
       this.login = this.fb.group({
         username: [null, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(10)])],
         password: [null, Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(10)])]
       })
+
+      authenticationService.changeEmitted$.subscribe(
+        authenticated => {
+            this.isLoggedIn = authenticated;
+     });
   }
 
   ngOnInit(){
@@ -84,6 +91,7 @@ export class LoginComponent implements OnInit {
     this.authenticationService.login(this.login.value)
       .subscribe(data => {
         console.log(data);
+        this.authenticationService.changeAuthenticated(true);
         this.router.navigate(['/info']);
       },
       err => {
@@ -98,10 +106,8 @@ export class LoginComponent implements OnInit {
   }
 
   logout(){
-    console.log("logging out");
     this.authenticationService.logout();
     // TODO: On success show a success message
-    this.isLoggedIn = false;
   }
 
 

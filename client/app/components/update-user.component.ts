@@ -132,6 +132,7 @@ export class UpdateUserComponent implements OnInit {
 
       if (username == this.authenticationService.user.username){
         this.authenticationService.logout();
+        // TODO: Change to observable so 'navigate' can move into success of the observable
         this.router.navigate(['/login']);
       }
       else {
