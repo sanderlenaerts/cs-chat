@@ -201,13 +201,17 @@ module.exports = function(io) {
 
     socket.on('stop-chat', function(data){
       // When manually stopping the chat
-      console.log('Staff before quit: ', staff);
-      console.log('Staff in chat before quit: ', staffInChat);
+      //Check if it's a client
+      if (clientsInChat.hasOwnProperty(socket.id)){
+        // it's a client
+        stopConversationByClient();
+      }
+      else {
+        if (staffInChat.hasOwnProperty(socket.id)){
+          stopConversationByStaff();
+        }
+      }
 
-      deleteConversationTraces();
-
-      console.log('Staff after quit: ', staff);
-      console.log('Staff in chat after quit: ', staffInChat);
     })
 
     var stopConversationByClient = function(){
@@ -226,48 +230,23 @@ module.exports = function(io) {
     }
 
     var stopConversationByStaff = function(){
-      console.log("Staff member is stopping the conversation");
+      console.log('Stopping conversation by staff');
       var clientId = staffInChat[socket.id].partner;
 
       var obj = new Object();
       obj.name = staffInChat[socket.id].name;
 
-      console.log("clientsInChat before delete: ", clientsInChat);
-      console.log("staffInChat before delete: ", staffInChat);
-
-
       delete clientsInChat[clientId];
-
-      console.log("clientsInChat after delete: ", clientsInChat);
       delete staffInChat[socket.id];
-
-      console.log("staffInChat after delete: ", staffInChat);
-
-      console.log("staff: ", staff);
-      console.log("queue: ", queue);
 
       staff[socket.id] = obj;
 
-      console.log("staff after: ", staff);
-
       endConversation(clientId);
+      endConversation(socket.id);
       updateQueueAmount();
 
       if (clientInformation.hasOwnProperty(clientId)){
         delete clientInformation[clientId];
-      }
-    }
-
-    var deleteConversationTraces = function(){
-      //Check if it's a client
-      if (clientsInChat.hasOwnProperty(socket.id)){
-        // it's a client
-        stopConversationByClient();
-      }
-      else {
-        if (staffInChat.hasOwnProperty(socket.id)){
-          stopConversationByStaff();
-        }
       }
     }
 
