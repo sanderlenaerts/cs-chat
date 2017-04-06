@@ -17,27 +17,29 @@ header
   display: flex
   justify-content: space-between
   height: 84px
-  align-items: flex-start
 
-.logout
-  z-index: 3
-  padding: 10px 20px
+  .dropdown-btn
+    padding-top: 32px
 
-  &:hover
-    cursor: pointer
-  
-  a
-    text-decoration: none
-    font-size: smaller
-    color: $grey-tint
-    box-sizing: border-box
+  .logout
+    z-index: 3
+    padding: 10px 20px
 
     &:hover
       cursor: pointer
-      color: darken($grey-tint, 15%)
+    
+    a
+      text-decoration: none
+      font-size: smaller
+      color: $grey-tint
+      box-sizing: border-box
 
-    @media screen and (max-width: $break-medium)
-      display: none
+      &:hover
+        cursor: pointer
+        color: darken($grey-tint, 15%)
+
+      @media screen and (max-width: $break-medium)
+        display: none
 
 nav
   display: flex

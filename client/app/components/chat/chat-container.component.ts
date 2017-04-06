@@ -9,8 +9,20 @@ import { Ticket } from '../../models/ticket';
   encapsulation: ViewEncapsulation.None,
   template: `
   <div class="chatcontainer">
-    <h3 *ngIf="!isLoggedIn">We advise you to first carefully read the self-help section, as this might provide a solution to the issue(s) you may be experiencing.</h3>
+    <div class="inner-container">
 
+      <h3 *ngIf="!isLoggedIn && !active">We advise you to first carefully read the self-help section, as this might provide a solution to the issue(s) you may be experiencing.</h3>
+
+      <div *ngIf="!active && !isLoggedIn && registered && !!partner" class="has-errors">
+        <p class="error">{{partner.name}} has disconnected from the chat
+      </div>
+      <div *ngIf="!active && !isLoggedIn && registered" class="btn-container">
+        <button [ngClass]="{'success-btn': inQueue == false, 'danger-btn': inQueue == true}" (click)="toggleQueue()" class="btn full-btn">{{ inQueue ? 'Leave queue' : 'Start chatting'}}</button>
+        <p *ngIf="inQueue">You are currently number {{position}} in queue</p>
+      </div>
+
+    </div>
+  
     <user-input (registered)="getCustomerData($event)" *ngIf="!registered && !isLoggedIn"></user-input>
 
     <chat class="chat" *ngIf="(registered && active) || isLoggedIn" [isLoggedIn]="isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="disconnect($event)"></chat>
@@ -54,14 +66,6 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
       <div class="controls" *ngIf="isConnected && (amountQueue > 0) && !active">
         <button class="btn success-btn full-btn" (click)="nextCustomer()">Next customer</button>
       </div>
-    </div>
-
-    <div *ngIf="!active && !isLoggedIn && registered && !!partner" class="has-errors">
-      <p class="error">{{partner.name}} has disconnected from the chat
-    </div>
-    <div *ngIf="!active && !isLoggedIn && registered" class="btn-container">
-      <button [ngClass]="{'success-btn': inQueue == false, 'danger-btn': inQueue == true}" (click)="toggleQueue()" class="btn full-btn">{{ inQueue ? 'Leave queue' : 'Start chatting'}}</button>
-      <p *ngIf="inQueue">You are currently number {{position}} in queue</p>
     </div>
   </div>
 

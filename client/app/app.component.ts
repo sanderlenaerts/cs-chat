@@ -21,14 +21,15 @@ import { NotificationComponent } from './components/notification.component';
         <img src="./dist/assets/images/hq.svg" width="84px">
       </div>
       <div *ngIf="authenticated" class="logout">
-        <a (click)="logout()">Log out</a>
+        <a (click)="logout()"><i class="fa fa-sign-out" aria-hidden="true"></i>
+Log out</a>
       </div>
       <div class="dropdown-btn">
         <i class="fa fa-bars dropdown-icon" aria-hidden="true" onclick="triggerDropdown()"></i>
         <dropdown (disconnect)="signOut($event)" [connected]="authenticated"></dropdown>
       </div>
     </header>
-    <notification [notification]="notification" [@fadeInOut]></notification>
+    <notification (discard)="notification = {message: '', type: ''}" [notification]="notification" [@fadeInOut]></notification>
     <router-outlet></router-outlet>
   `,
   styleUrls: ['./dist/assets/css/default.css', './dist/assets/css/header.css'],
@@ -78,9 +79,23 @@ export class AppComponent implements OnInit {
   signOut(connected){
     this.logout();
   }
+;
 
   logout(){
-    this.authenticationService.logout();
+    this.authenticationService.logout().subscribe(data => {
+      console.log('isLoggedIn: ', data);
+      this.notificationService.notify({
+        message: 'You were successfully logged out',
+        type: 'success'
+      })
+    },
+    error => {
+      this.notificationService.notify({
+        message: 'Unable to logout',
+        type: 'error'
+      })
+    });
+
     //TODO: change logout into observable so "navigate" can be part of success
     this.router.navigate(['/login']);
   }

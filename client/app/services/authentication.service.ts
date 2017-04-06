@@ -91,6 +91,12 @@ export class AuthenticationService {
     }
     localStorage.removeItem('user');
     this.changeAuthenticated(false);
+
+    return Observable.create(observer => {
+      // Yield a single value and complete
+      observer.next(this.isLoggedIn());
+      observer.complete();
+    });
   }
 
   currentUser(){
