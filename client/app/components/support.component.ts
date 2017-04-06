@@ -56,10 +56,13 @@ export interface Customer {
         <label class="sidelabel"><input type="checkbox"
         [formControl]="support.controls.quickfix.controls.multidevice"/>Multi Device logoff</label>
 
+        <label class="sidelabel"><input type="checkbox"
+        [formControl]="support.controls.quickfix.controls.other"/><input #otherFix (keypress)="checkOtherFix(otherFix.value)" placeholder="Other..." class="inline-checkboxes" type="text" [formControl]="support.controls.otherFix"></label>
+
+       
+
         <label for="location">Location</label>
         <input id="location" type="text" name="location" placeholder="Location" [formControl]="support.controls['location']">
-
-
 
         <label for="username">Username</label>
         <input id="username" type="text" name="username" placeholder="Username" [formControl]="support.controls['username']">
@@ -92,6 +95,9 @@ export interface Customer {
         <label class="sidelabel"><input type="checkbox"
         [formControl]="support.controls.proceed.controls.fix"/>Break Fix</label>
 
+         <label class="sidelabel"><input type="checkbox"
+        [formControl]="support.controls.proceed.controls.other"/><input #otherProceed (keypress)="checkOtherProceed(otherProceed.value)" placeholder="Other..." class="inline-checkboxes" type="text" [formControl]="support.controls.otherProceed"></label>
+
       </form>
     </div>
   `,
@@ -99,15 +105,13 @@ export interface Customer {
 })
 export class SupportFormComponent implements OnInit, OnChanges {
 
+  support: FormGroup;
+
   @Input()
   customer: Customer
 
   @Input()
   reset: boolean;
-
-
-
-  support: FormGroup;
 
   @Output()
   supportEvent = new EventEmitter();
@@ -120,10 +124,11 @@ export class SupportFormComponent implements OnInit, OnChanges {
       name: ['', Validators.required],
       type: ['', Validators.required],
       quickfix: this.fb.group({
-        'offandon': [''],
-        'pebkkac': [''],
-        'password': [''],
-        'multidevice': ['']
+        'offandon': [false],
+        'pebkkac': [false],
+        'password': [false],
+        'multidevice': [false],
+        'other': [false]
       }),
       location: null,
       room: [null],
@@ -131,23 +136,25 @@ export class SupportFormComponent implements OnInit, OnChanges {
       solution: [null],
       username: [null],
       proceed: this.fb.group({
-        'resolve': [''],
-        'ticket': [''],
-        'credit': [''],
-        'call': [''],
-        'visit': [''],
-        'fix': ['']
+        'resolve': [false],
+        'ticket': [false],
+        'credit': [false],
+        'call': [false],
+        'visit': [false],
+        'fix': [false],
+        'other': [false]
       }),
+      otherProceed: [''],
+      otherFix: ['']
     })
+
     this.support.valueChanges.subscribe(data => {
       //Send the data to the backend
-      console.log("Do support");
       var obj = {
         support: data,
-        valid: this.support.valid
+        valid: this.support.valid,
       }
 
-      console.log('Emitting event: ', obj);
       this.supportEvent.emit(obj);
     });
   }
@@ -170,11 +177,24 @@ export class SupportFormComponent implements OnInit, OnChanges {
         this.support.reset();
       }
     }
+  }
+  checkOtherProceed(value){
+    if (value = ''){
+      // uncheck the checkbox
+     
+    }
+    else {
+      // check the checkbox
+    }
+  }
 
-
-
-
-
+  checkOtherFix(value){
+    if (value = ''){
+      // uncheck the checkbox
+    }
+    else {
+      // check the checkbox
+    }
   }
 
   checkboxRequired(group: FormGroup){

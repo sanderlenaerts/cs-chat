@@ -38,6 +38,9 @@ var mail = function(req, res, next){
 
   console.log(data);
 
+  console.log(data.support.otherFix);
+  console.log(data.support.otherProceed);
+
   var content = "";
   var contentHtml = "<style> .container { font-family: Tahoma; margin: 5vh auto; padding: 5vh 5%; background-color: #ecf0f1; border-radius: 15px; color: #333; max-width: 560px; } h1, h2 { font-weight: 100; margin: 0; } h1 { display: inline-block; float: right; color: #bdc3c7; } .company { color: #333; float: none; display: inline-block; font-weight: 600; font-family: Verdana; } h2 { clear: both; margin-top: 20px; background-color: #e74c3c; padding: 5px 15px; border-radius: 15px; display: inline-block; color: white; font-size: 1rem; } span { padding-right: 20px; display: inline-block; min-width: 165px; text-decoration: underline; } p { margin: 8px 0; } .chat p { vertical-align: middle; font-size: 0.8rem; margin: 2px 0 } .chat p:first-child { width: 20%; min-width: 50px; max-width: 150px; margin: 5px 5px 0 0 ; color: white; padding: 5px 12px; display: inline-block; color: #2ecc71; } .chat p:nth-child(2n){ display: inline-block; width: 70%; } .chat p.support { color: #3498db; } .big { width: 25%; min-width: 165px; display: inline-block; padding-right: 20px; } .big-content { display: inline-block; width: calc(100% - 220px); vertical-align: text-top; }</style><div class='container'><h1 class='company'>HQ N.D.C.</h1><h1>Chat Ticket</h1><section class='customer'><h2>Customer information</h2>";
 
@@ -58,11 +61,14 @@ var mail = function(req, res, next){
   var temp = [];
   for (var field in data.support.quickfix){
     if (data.support.quickfix[field]){
-      temp.push(field);
+      if (field != 'other'){
+        temp.push(field);
+      }
+      
     }
   }
 
-  if (temp.length > 0){
+  if (temp.length > 0 || (data.support.quickfix['other'] == true && data.support.otherFix != null && data.support.otherFix != '')){
     contentHtml += "<p><span>Quickfix:</span>";
 
     for (var i = 0; i < temp.length; i++){
@@ -73,6 +79,16 @@ var mail = function(req, res, next){
         contentHtml += mapping[temp[i]] + ", ";
       }
     }
+
+    if (data.support.quickfix['other'] == true && data.support.otherFix != null && data.support.otherFix != ''){
+      if (temp.length > 0){
+        contentHtml += ", " + data.support.otherFix + "";
+      }
+      else {
+        contentHtml += "" + data.support.otherFix + "";
+      }
+    }
+
     contentHtml += "</p>";
   }
 
@@ -96,11 +112,13 @@ var mail = function(req, res, next){
   var temporary = [];
   for (var field in data.support.proceed){
     if (data.support.proceed[field]){
-      temporary.push(field);
+      if (field != 'other'){
+         temporary.push(field);
+      }
     }
   }
 
-  if (temporary.length > 0){
+  if (temporary.length > 0 || (data.support.proceed['other'] == true && data.support.otherProceed != null && data.support.otherProceed != '')){
     contentHtml += "<p><span>Proceed:</span>";
 
     for (var i = 0; i < temporary.length; i++){
@@ -109,6 +127,16 @@ var mail = function(req, res, next){
       }
       else {
         contentHtml += mapping[temporary[i]] + ", ";
+      }
+    }
+
+
+    if (data.support.proceed['other'] == true && data.support.otherProceed != null && data.support.otherProceed != ''){
+      if (temporary.length > 0){
+        contentHtml += ", " + data.support.otherProceed + "";
+      }
+      else {
+        contentHtml += "" + data.support.otherProceed + "";
       }
     }
     contentHtml += "</p>";

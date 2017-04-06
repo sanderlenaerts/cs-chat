@@ -215,7 +215,7 @@ export class ChatContainerComponent implements OnInit {
 
   stopChat(){
     this.chatService.stopConversation();
-    this.partner = null;
+    //this.partner = null;
   }
 
   disconnect(data){
