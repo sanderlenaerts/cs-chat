@@ -17,22 +17,27 @@ header
   display: flex
   justify-content: space-between
   height: 84px
-  align-items: center
+  align-items: flex-start
 
+.logout
+  z-index: 3
+  padding: 10px 20px
+
+  &:hover
+    cursor: pointer
+  
   a
-    padding-right: 43px
+    text-decoration: none
+    font-size: smaller
+    color: $grey-tint
+    box-sizing: border-box
 
     &:hover
       cursor: pointer
       color: darken($grey-tint, 15%)
 
-.logout
-  z-index: 3
-  &:hover
-    cursor: pointer
-
-  @media screen and (max-width: $break-medium)
-    display: none
+    @media screen and (max-width: $break-medium)
+      display: none
 
 nav
   display: flex
@@ -56,6 +61,18 @@ nav
       padding-bottom: 3px
       position: relative
 
+      &::after
+        content: ""
+        position: absolute
+        display: block
+        margin: auto
+        background: transparent
+        width: 0
+        height: 2px
+        bottom: 0
+        left: 50%
+        transition:  width .5s ease, background-color .5s ease, left .5s ease
+
 
       a
         text-decoration: none
@@ -65,23 +82,22 @@ nav
         cursor: pointer
 
 
-      &:hover::before
-        content: ""
-        position: absolute
-        width: 36%
-        height: 2px
-        bottom: 0
+      &:hover::after
         left: 32%
-        border-bottom: 2px solid #333
+        background: $off-black
+        width: 36%
+ 
 
     .active
       position: relative
 
-      &::before
+      &::after
         content: ""
         position: absolute
+        margin: auto
+        background: $off-black
         width: 36%
         height: 2px
         bottom: 0
         left: 32%
-        border-bottom: 2px solid #333
+        transition: width .5s ease, background-color .5s ease

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, style, trigger, transition, animate } from '@angular/core';
 import { AuthenticationService } from './services/authentication.service';
 import { Router } from '@angular/router';
 
@@ -28,10 +28,21 @@ import { NotificationComponent } from './components/notification.component';
         <dropdown (disconnect)="signOut($event)" [connected]="authenticated"></dropdown>
       </div>
     </header>
-    <notification [notification]="notification"></notification>
+    <notification [notification]="notification" [@fadeInOut]></notification>
     <router-outlet></router-outlet>
   `,
-  styleUrls: ['./dist/assets/css/default.css', './dist/assets/css/header.css']
+  styleUrls: ['./dist/assets/css/default.css', './dist/assets/css/header.css'],
+  animations: [
+        trigger('fadeInOut', [
+            transition(':enter', [   // :enter is alias to 'void => *'
+                style({ opacity: 0 }),
+                animate(250, style({ opacity: 1 }))
+            ]),
+            transition(':leave', [   // :leave is alias to '* => void'
+                animate(250, style({ opacity: 0 }))
+            ])
+        ])
+    ]
 })
 
 export class AppComponent implements OnInit {
