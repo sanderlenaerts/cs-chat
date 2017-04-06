@@ -11,10 +11,9 @@ import { Ticket } from '../../models/ticket';
   <div class="chatcontainer">
     <h3 *ngIf="!isLoggedIn">We advise you to first carefully read the self-help section, as this might provide a solution to the issue(s) you may be experiencing.</h3>
 
-    <!-- TODO: Output event that saves the user-data -->
     <user-input (registered)="getCustomerData($event)" *ngIf="!registered && !isLoggedIn"></user-input>
 
-    <chat class="chat" *ngIf="(registered && active) || isLoggedIn" [isLoggedIn]="isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="endChatConversation($event)"></chat>
+    <chat class="chat" *ngIf="(registered && active) || isLoggedIn" [isLoggedIn]="isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="disconnect($event)"></chat>
 
     <div class="control-group" *ngIf="isLoggedIn">
       <div class="controls" *ngIf="isConnected && active">
@@ -104,7 +103,7 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
 
      <modal-content class="user-details">
        <p>Are you sure you want to discard the chat session? This will disconnect the customer and no ticket can be saved.</p>
-       <button (click)="discardModal.close();discardChat()" class="danger-button"><i class="fa fa-check"></i> Discard chat</button>
+       <button (click)="discardModal.close();stopChat()" class="danger-button"><i class="fa fa-check"></i> Discard chat</button>
        <button (click)="discardModal.close()"><i class="fa fa-times"></i> Cancel </button>
      </modal-content>
   </modal>
@@ -131,37 +130,32 @@ export class ChatContainerComponent implements OnInit {
   //TODO: Look into changing it into an observable
   reset: boolean = false;
 
-  isConnected: boolean;
+  isConnected: boolean = false;
   messages: any[] = [];
-  inQueue: boolean;
-  active: boolean;
-  chatDisabled: boolean;
+  inQueue: boolean = false;
+  active: boolean = false;
+  chatDisabled: boolean = false;
   amountQueue: Number;
   position: Number;
-  registered: boolean;
+  registered: boolean = false;
   customer: any;
   partner: any;
   ticket: Ticket;
 
-
-
-
   constructor(private chatService: ChatService, private authenticationService: AuthenticationService){
     authenticationService.changeEmitted$.subscribe(
-        authenticated => {
-            this.isLoggedIn = authenticated;
+      authenticated => {
+        this.isLoggedIn = authenticated;
+     });
+
+     chatService.changeConnectionEmitted$.subscribe(
+      connected => {
+        this.isConnected = connected;
      });
   }
 
   ngOnInit(){
     this.isLoggedIn = this.authenticationService.isLoggedIn();
-
-    //TODO: Change to observable (like authenticated)
-    this.isConnected = false;
-    this.inQueue = false;
-    this.active = false;
-    this.chatDisabled = false;
-    this.registered = false;
   }
 
   getCustomerData(customer){
@@ -174,78 +168,57 @@ export class ChatContainerComponent implements OnInit {
       // Do something with the data;
       this.handleData(data);
     })
-    this.isConnected = true;
   }
 
   quitWork(){
     if (!this.active){
-      this.chatService.stopConversation();
       this.connection.unsubscribe();
-      this.isConnected = false;
       this.active = false;
       this.messages = [];
     }
-
   }
 
   ngOnDestroy(){
     if (this.connection){
+      // make sure we unsubscribe from the observable
       this.connection.unsubscribe();
     }
   }
 
   nextCustomer(){
     this.chatService.nextCustomer();
-    this.chatDisabled = false;
   }
 
   terminateChat(){
-    //Clear the chat
-    console.log('clearing the chat');
-    this.messages = [];
-    this.active = false;
     this.chatService.stopConversation();
-
+    
     //Send the form data
-    console.log('Ticket: ', this.ticket);
     this.chatService.sendSupportData(this.ticket).subscribe(data => {
       // TODO: Success messages
-      console.log('ticket sent: ', this.ticket);
       this.reset = !this.reset;
     })
   }
 
   toggleQueue(){
     if (!this.inQueue){
-      // Create the connection
-      console.log('joinin the queue');
+      // Create the connection to socket.io
       this.connection = this.chatService.joinQueue(this.customer).subscribe(data => {
-        console.log(data);
         this.handleData(data);
-
       })
     }
     else {
       // Stop the connection
       this.connection.unsubscribe();
-      this.chatService.leaveQueue();
     }
     this.inQueue = !this.inQueue;
   }
 
-  discardChat(){
-    this.stopChat();
-  }
-
   stopChat(){
-    this.messages = [];
-    this.active = false;
     this.chatService.stopConversation();
-    this.inQueue = false;
     this.partner = null;
   }
 
-  endChatConversation(data){
+  disconnect(data){
     this.stopChat();
     this.connection.unsubscribe();
   }
@@ -256,29 +229,27 @@ export class ChatContainerComponent implements OnInit {
       chat: this.messages,
       valid: supportForm.valid
     }
-    console.log(this.messages);
+
     if(this.partner){
       data.support.email = this.partner.email;
-      console.log(data.support.email);
     }
     this.ticket = data;
   }
 
   private handleData(data){
-    console.log(data);
     if (data.type == 'start'){
       this.partner = data;
-      console.log('setting active');
       this.active = true;
+      this.chatDisabled = false;
     }
     else if (data.type == 'new-message'){
-      console.log("From: ", data.from);
       this.messages.push({
         from: data.from,
         text: data.text
       });
     }
     else if (data.type == 'endConversation'){
+      console.log('Clearing the conversation in container');
       this.inQueue = false;
       this.messages = [];
       this.active = false;

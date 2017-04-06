@@ -79,9 +79,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
   @Output()
   chatend = new EventEmitter();
 
-  constructor(private authenticationService : AuthenticationService, private chatService : ChatService){
-
-  }
+  constructor(private authenticationService : AuthenticationService, private chatService : ChatService){}
 
   moveFocus(){
     this.inputFocused = true;
@@ -95,12 +93,10 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   sendMessage(){
     if (this.message != ''){
-      console.log(this.message);
       this.chatService.sendMessage(this.message);
       this.message = '';
     }
   }
-
 
   ngAfterViewChecked(){
     this.scrollToBottom();
@@ -110,7 +106,7 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     this.chatend.emit('');
   }
 
-  scrollToBottom(): void {
+  private scrollToBottom(): void {
       try {
           this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
       } 

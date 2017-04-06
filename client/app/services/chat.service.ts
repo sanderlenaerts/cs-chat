@@ -5,24 +5,32 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import * as io from 'socket.io-client';
 import { AuthenticationService } from './authentication.service';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class ChatService {
   private socket;
   private connection;
   private url = 'http://localhost:3000';
+  private connectionChange = new Subject<any>();
 
   constructor(private http: Http, private authenticationService: AuthenticationService){
 
   }
 
+  // Observable string streams
+  changeConnectionEmitted$ = this.connectionChange.asObservable();
+
+  // Service message commands
+  changeConnected(change: any) {
+      this.connectionChange.next(change);
+  }
+
   nextCustomer(){
-    console.log('Asking for a customer');
     this.socket.emit('match-customer', {});
   }
 
   sendSupportData(data){
-    console.log('ticket: ', data);
     // Send request to Express REST API
 
     let headers = new Headers();
@@ -38,11 +46,8 @@ export class ChatService {
   }
 
   stopConversation(){
-    console.log('stopping chat');
     this.socket.emit('stop-chat', {});
   }
-
-
 
   sendMessage(message){
     this.socket.emit('add-message', message);
@@ -50,7 +55,6 @@ export class ChatService {
 
   joinQueue(customer) {
     return this.registerSocket(customer);
-
   }
 
   disconnect(){
@@ -88,6 +92,7 @@ export class ChatService {
       })
 
       this.socket.on('endConversation', (data) => {
+        console.log('Ending the conversation - ChatService')
         observer.next(data);
       })
 
@@ -105,14 +110,12 @@ export class ChatService {
 
       return () => {
         this.socket.disconnect();
+        this.changeConnected(false);
       };
     })
     this.connection = observable;
+    this.changeConnected(true);
     return observable;
-  }
-
-  leaveQueue(){
-    this.socket.disconnect();
   }
 
   startWork(){
@@ -121,6 +124,7 @@ export class ChatService {
 
   quitWork(){
     this.connection = null;
+    this.changeConnected(false);
     this.socket.disconnect();
   }
 

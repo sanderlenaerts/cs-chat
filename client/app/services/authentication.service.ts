@@ -4,17 +4,14 @@ import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import { Subject } from 'rxjs/Subject';
+import { User } from '../models/user';
 
 
 @Injectable()
 export class AuthenticationService {
 
   public token: String;
-  public user = {
-    role: '',
-    name: '',
-    username: ''
-  }
+  public user: User;
 
   @Output()
   authChange = new EventEmitter();
@@ -23,7 +20,7 @@ export class AuthenticationService {
     this.token = JSON.parse(localStorage.getItem('token'));
     this.user = JSON.parse(localStorage.getItem('user'));
     if (this.user == null){
-      this.user = {
+      this.user =  {
         role: '',
         name: '',
         username: ''
@@ -44,7 +41,6 @@ export class AuthenticationService {
   betweenOffice = function(){
     var date = new Date();
     var lower = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 8, 30, 0);
-
     var upper = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 21, 30, 0);
 
     // check if the date passed is between these hours
@@ -67,24 +63,21 @@ export class AuthenticationService {
 
     return this.http.post('http://localhost:3000/api/login', JSON.stringify(credentials), options)
       .map((response: Response) => {
-        //TODO: Do something with the jwt
-
         var res = response.json();
 
         // set token property
         this.token = res.token;
-        this.user.role = res.role;
-        this.user.username = res.username;
-        this.user.name = res.name;
-
-        console.log(this.user);
+        this.user = {
+          role: res.role,
+          username: res.username,
+          name: res.name
+        }
 
         // store username and jwt token in local storage to keep user logged in between page refreshes
-        console.log(JSON.stringify(this.user));
         localStorage.setItem('token', JSON.stringify(this.token));
         localStorage.setItem('user', JSON.stringify(this.user));
 
-        return response.json();
+        return res;
       })
   }
 
