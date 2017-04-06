@@ -24,6 +24,8 @@ import { UserInputComponent } from './components/chat/user-input.component';
 import { SupportFormComponent } from './components/support.component';
 import { DropdownComponent } from './components/dropdown.component';
 import { UpdateUserComponent } from './components/update-user.component';
+import { NotificationComponent } from './components/notification.component';
+
 
 // Validators
 import { EmailValidator } from './components/validators/email.validator';
@@ -33,6 +35,7 @@ import { CookieService } from 'angular2-cookie/services/cookies.service';
 import { AuthenticationService } from './services/authentication.service';
 import { UserService } from './services/user.service';
 import { ChatService } from './services/chat.service';
+import { NotificationService } from './services/notification.service';
 
 // Authorization Guard
 import { AuthGuard } from './services/guard.service';
@@ -89,7 +92,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     SearchPipe,
     SearchComponent,
     DropdownComponent,
-    UpdateUserComponent
+    UpdateUserComponent,
+    NotificationComponent
   ],
   bootstrap: [ AppComponent ],
   providers: [
@@ -104,7 +108,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
       useFactory: authHttpServiceFactory,
       deps: [Http, RequestOptions]
     },
-    ChatService
+    ChatService,
+    NotificationService
   ]
 })
 

@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { UserService } from '../services/user.service';
 import { AuthenticationService } from '../services/authentication.service';
+import { NotificationService } from '../services/notification.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { SearchPipe } from '../filters/user.filter';
@@ -62,8 +63,23 @@ import { SearchComponent } from './search.component';
      <modal-content class="user-details">
        <p>Are you sure you want to delete this user?</p>
        <p>This action cannot be reversed!</p>
-       <button (click)="deleteUser(user.username);deleteModal.close()" class="danger-button"><i class="fa fa-check"></i> Delete</button>
+       <button (click)="isLoggedInUser(user.username) ? sureModal.open() : deleteUser(user.username);deleteModal.close()" class="danger-button"><i class="fa fa-check"></i> Delete</button>
        <button (click)="deleteModal.close()"><i class="fa fa-times"></i> Cancel </button>
+     </modal-content>
+  </modal>
+
+   <modal  #sureModal
+         title=""
+         class="modal modal-small"
+         [hideCloseButton]="true"
+         [closeOnEscape]="false"
+         [closeOnOutsideClick]="false">
+
+     <modal-content class="user-details">
+       <p>You are about to delete yourself. Are you sure you want to do this?</p>
+       <p>This action cannot be reversed!</p>
+       <button (click)="deleteUser(user.username);sureModal.close();deleteModal.close();" class="danger-button"><i class="fa fa-check"></i> Delete</button>
+       <button (click)="sureModal.close()"><i class="fa fa-times"></i> Cancel </button>
      </modal-content>
   </modal>
 
@@ -88,7 +104,7 @@ export class UpdateUserComponent implements OnInit {
   update: FormGroup;
   sub: any;
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private authenticationService: AuthenticationService, private router: Router, private fb: FormBuilder){}
+  constructor(private route: ActivatedRoute, private userService: UserService, private authenticationService: AuthenticationService, private router: Router, private fb: FormBuilder, private notificationService: NotificationService){}
 
   ngOnInit(){
     this.update = this.fb.group({
@@ -117,12 +133,20 @@ export class UpdateUserComponent implements OnInit {
   doUpdate(){
     this.userService.updateUser(this.user.username, this.update.value).subscribe(data => {
       //TODO: Success message
-      console.log("Updated user:", data);
+      this.notificationService.notify({
+        message: this.user.username + " was successfully updated",
+        type: 'success'
+      })
       this.router.navigate(['/admin/users']);
+      
     },
     error => {
       console.log(error);
     })
+  }
+
+  isLoggedInUser(username){
+    return username == this.authenticationService.user.username;
   }
 
   deleteUser(username){
@@ -130,7 +154,7 @@ export class UpdateUserComponent implements OnInit {
     this.userService.deleteUser(username).subscribe(data => {
       console.log('Deleted the user');
 
-      if (username == this.authenticationService.user.username){
+      if (this.isLoggedInUser(username)){
         this.authenticationService.logout();
         // TODO: Change to observable so 'navigate' can move into success of the observable
         this.router.navigate(['/login']);

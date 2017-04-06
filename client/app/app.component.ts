@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from './services/authentication.service';
 import { Router } from '@angular/router';
 
+import { NotificationService } from './services/notification.service';
+import { Notification } from './models/notification';
+import { NotificationComponent } from './components/notification.component';
+
 @Component({
   selector: 'my-app',
   template: `
@@ -24,6 +28,7 @@ import { Router } from '@angular/router';
         <dropdown (disconnect)="signOut($event)" [connected]="authenticated"></dropdown>
       </div>
     </header>
+    <notification [notification]="notification"></notification>
     <router-outlet></router-outlet>
   `,
   styleUrls: ['./dist/assets/css/default.css', './dist/assets/css/header.css']
@@ -32,16 +37,31 @@ import { Router } from '@angular/router';
 export class AppComponent implements OnInit {
 
   authenticated: boolean;
+  notification: Notification;
 
   ngOnInit(){
     this.authenticated = this.authenticationService.isLoggedIn();
   }
 
-  constructor(private authenticationService: AuthenticationService, private router: Router){
+  constructor(private authenticationService: AuthenticationService, private router: Router, private notificationService: NotificationService){
     authenticationService.changeEmitted$.subscribe(
         authenticated => {
             this.authenticated = authenticated;
     });
+
+    notificationService.notificationEmitted$.subscribe(
+        data => {
+            // data should contain a message and a type
+            console.log("Notification to show: ", data);
+            this.notification = data;
+            setTimeout(() => {
+              console.log(this.notification);
+              this.notification = {
+                message: '',
+                type: ''
+              };
+            }, 4000);
+     });
   }
 
   signOut(connected){
