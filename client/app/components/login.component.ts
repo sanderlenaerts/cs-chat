@@ -6,11 +6,6 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'login-page',
   template: `
-  <header class="nav-header">
-    <div  class="company-logo">
-      <img src="./dist/assets/images/hq.svg" width="84px">
-    </div>
-  </header>
   <main>
     <!-- Login form -->
     <div class="content-wrapper">
