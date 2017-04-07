@@ -23,6 +23,7 @@
     "cors": "*",
     "express": "^4.14.1",
     "express-validator": "^3.1.2",
+    "jsonwebtoken": "^7.3.0",
     "juice": "^4.0.2",
     "jwt-simple": "^0.5.1",
     "mongoose": "^4.9.1",
