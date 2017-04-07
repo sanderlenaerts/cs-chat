@@ -7,6 +7,7 @@
     "gulp": "gulp",
     "test": "node_modules/.bin/mocha -w",
     "start": "cd client && npm run deploy && cd .. && node server.js"
+    
   },
   "repository": {
     "type": "git",
