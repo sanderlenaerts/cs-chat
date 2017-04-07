@@ -10,7 +10,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "gulp:w": "gulp",
-    "deploy": "tsc && gulp"
+    "deploy": "tsc && gulp sass"
   },
   "repository": {
     "type": "git",
