@@ -9,7 +9,8 @@
     "test": "node_modules/.bin/mocha -w",
     "tsc": "tsc",
     "tsc:w": "tsc -w",
-    "gulp:w": "gulp"
+    "gulp:w": "gulp",
+    "deploy": "tsc && gulp"
   },
   "repository": {
     "type": "git",
