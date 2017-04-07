@@ -52,7 +52,7 @@ export class AuthenticationService {
     headers.append('Content-Type', 'application/json');
     let options = new RequestOptions({ headers: headers });
 
-    return this.http.post('http://localhost:3000/api/register', userData, options)
+    return this.http.post('/api/register', userData, options)
       .map((response: Response) => response.json())
   }
 
@@ -61,7 +61,7 @@ export class AuthenticationService {
     headers.append('Content-Type', 'application/json');
     let options = new RequestOptions({ headers: headers });
 
-    return this.http.post('http://localhost:3000/api/login', JSON.stringify(credentials), options)
+    return this.http.post('/api/login', JSON.stringify(credentials), options)
       .map((response: Response) => {
         var res = response.json();
 

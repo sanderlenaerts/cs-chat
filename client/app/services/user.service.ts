@@ -12,7 +12,7 @@ export class UserService {
   }
 
   getUsers(){
-    return this.http.get('http://localhost:3000/api/users')
+    return this.http.get('/api/users')
       .map((response: Response) => response.json())
   }
 
@@ -44,7 +44,7 @@ export class UserService {
     let requestOptions = new RequestOptions();
     requestOptions.search = params;
 
-    return this.http.get('http://localhost:3000/api/user', requestOptions)
+    return this.http.get('/api/user', requestOptions)
       .map((response: Response) => response.json())
   }
 
@@ -60,7 +60,7 @@ export class UserService {
         body: user
       });
 
-    return this.http.delete('http://localhost:3000/api/users', options)
+    return this.http.delete('/api/users', options)
       .map((response: Response) => response.json())
   }
 

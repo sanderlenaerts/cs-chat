@@ -37,7 +37,7 @@ export class ChatService {
     headers.append('Content-Type', 'application/json');
     let options = new RequestOptions({ headers: headers });
 
-    return this.http.post('http://localhost:3000/api/mail', JSON.stringify(data), options)
+    return this.http.post('/api/mail', JSON.stringify(data), options)
       .map((response: Response) => response.json())
   }
 
@@ -63,7 +63,7 @@ export class ChatService {
 
   private registerSocket(d){
     let observable = new Observable(observer => {
-      this.socket = io(this.url);
+      this.socket = io("/");
       this.socket.on('message', (data) => {
         observer.next(data);
       });
