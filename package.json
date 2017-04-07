@@ -7,8 +7,7 @@
     "gulp": "gulp",
     "test": "node_modules/.bin/mocha -w",
     "heroku-prebuild": "cd client && npm install && cd ..",
-    "start": "node server.js",
-    "postinstall": "cd client && npm run deploy && cd .."
+    "start": "cd client && npm run deploy && cd .. && node server.js"
   },
   "repository": {
     "type": "git",
