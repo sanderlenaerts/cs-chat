@@ -22,26 +22,9 @@
 
     <!--  Load the dependencies -->
 
-    <!-- build:vendor -->
-    <script src="node_modules/core-js/client/shim.min.js" charset="utf-8"></script>
-    <script src="node_modules/zone.js/dist/zone.js" charset="utf-8"></script>
-    <script src="node_modules/reflect-metadata/Reflect.js" charset="utf-8"></script>
-
-    <!-- Load angular with system js -->
-    <script src="node_modules/systemjs/dist/system.src.js" charset="utf-8"></script>
-    <script src="systemjs.config.js" charset="utf-8"></script>
-    <!-- endbuild -->
-
-    <!-- build:app -->
-    <!-- endbuild -->
-
-    <!-- build:boot -->
-    <script>
-        System.import('app').catch(function(err) {
-            console.error(err);
-        })
-    </script>
-    <!-- endbuild -->
+    <script src="./dist/lib/vendors.min.js"></script>
+    <script src="./dist/app.js"></script>
+    <script src="./dist/boot.js"></script>
     
 </head>
 

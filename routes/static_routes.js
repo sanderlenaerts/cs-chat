@@ -6,7 +6,13 @@ var path = require('path');
 router.use(express.static(path.join(__dirname, '../client')));
 
 router.get('/*', function(req, res){
-  res.sendFile(path.join(__dirname, '../index.html'));
+  if (process.env.NODE_ENV == "production"){
+    res.sendFile(path.join(__dirname, '../production.html'));
+  }
+  else {
+    res.sendFile(path.join(__dirname, '../index.html'));
+  }
+  
 });
 
 

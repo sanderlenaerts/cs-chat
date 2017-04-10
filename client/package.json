@@ -4,13 +4,11 @@
   "description": "Afstudeerproject 2017",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && concurrently \"npm run tsc:w\" \"npm run gulp:w\"",
+    "start": "npm run gulp:w",
     "gulp": "gulp",
     "test": "node_modules/.bin/mocha -w",
-    "tsc": "tsc",
-    "tsc:w": "tsc -w",
-    "gulp:w": "gulp",
-    "deploy": "tsc && gulp sass"
+    "gulp:w": "gulp dev",
+    "deploy": "gulp"
   },
   "repository": {
     "type": "git",
@@ -30,10 +28,16 @@
     "concurrently": "^3.3.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-html-replace": "^1.6.2",
     "gulp-imagemin": "^3.1.1",
     "gulp-sass": "^3.1.0",
+    "gulp-sourcemaps": "^2.5.1",
     "gulp-tsc": "^1.2.6",
+    "gulp-typescript": "^3.1.6",
+    "gulp-uglify": "^2.1.2",
     "sass": "^0.5.0",
+    "systemjs-builder": "^0.16.4",
     "typescript": "^2.1.6"
   },
   "dependencies": {
