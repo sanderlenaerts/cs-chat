@@ -8,7 +8,7 @@
     "gulp": "gulp",
     "test": "node_modules/.bin/mocha -w",
     "gulp:w": "gulp dev",
-    "deploy": "gulp"
+    "deploy": "gulp compile && gulp bundle:js"
   },
   "repository": {
     "type": "git",
