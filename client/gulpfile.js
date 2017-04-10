@@ -43,7 +43,8 @@ gulp.task('bundle:libs', function () {
 gulp.task('compile:ts', function () {
   return gulp
     .src([
-        "./app/**/*.ts"
+        "./app/**/*.ts",
+        "!./app/node_modules/**/*.min.js"
     ])
     .pipe(sourcemaps.init())
     .pipe(tsc(tsProject))
