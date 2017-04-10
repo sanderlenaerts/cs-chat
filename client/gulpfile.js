@@ -50,6 +50,7 @@ gulp.task('compile:ts', function () {
     .pipe(tsc(tsProject))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist/'));
+
 });
 
 
@@ -59,6 +60,9 @@ gulp.task('sass:w', ['sass'], function() {
     //gulp.watch('./**/*.html';, ['html']);
     //gulp.watch('./js/**/*', ['js']);
 });
+
+gulp.task('compile', ['sass', 'compile:ts']);
+gulp.task()
 
 // Generate systemjs-based builds
 gulp.task('bundle:js', function() {
@@ -70,4 +74,4 @@ gulp.task('bundle:js', function() {
 gulp.task('dev', ['sass:w', 'bundle:libs']);
 
 //Default task for deployment compiling sass and typescript and bundling libraries
-gulp.task ('default', ['sass', 'compile:ts', 'bundle:libs', 'bundle:js']);
+gulp.task ('default', ['sass', 'compile:ts', 'bundle:libs']);
