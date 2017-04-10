@@ -45,14 +45,11 @@ gulp.task('bundle:libs', function () {
 // Compile TypeScript to JS
 gulp.task('compile:ts', function () {
   return tsProject
-    .src([
-        "./app/**/*.ts",
-        "!app/node_modules/**/*.ts"
-    ])
+    .src()
     .pipe(sourcemaps.init())
-    .pipe(tsc(tsProject(tsConfig.compilerOptions)))
+    .pipe(tsc(tsProject))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./dist'));
+    .pipe(gulp.dest('./dist/'));
 });
 
 
