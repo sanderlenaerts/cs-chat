@@ -62,7 +62,12 @@ gulp.task('sass:w', ['sass'], function() {
 });
 
 gulp.task('compile', ['sass', 'compile:ts']);
-gulp.task()
+gulp.task('assets', function(){
+    gulp.src([
+        './app/assets',
+    ])
+    .pipe(gulp.dest('./dist/assets/'));
+})
 
 // Generate systemjs-based builds
 gulp.task('bundle:js', function() {
