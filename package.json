@@ -6,8 +6,7 @@
   "scripts": {
     "gulp": "gulp",
     "test": "node_modules/.bin/mocha -w",
-    "heroku-prebuild": "cd client && npm install && cd ..",
-    "start": "cd client && npm run deploy && cd .. && node server.js"
+    "start": "npm install && cd client && npm install && npm install --only=dev && gulp compile && gulp bundle:js && cd .. && node server"
   },
   "repository": {
     "type": "git",
