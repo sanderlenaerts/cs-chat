@@ -69,4 +69,4 @@ gulp.task('bundle:js', function() {
 gulp.task('dev', ['sass:w', 'bundle:libs']);
 
 //Default task for deployment compiling sass and typescript and bundling libraries
-gulp.task ('default', ['sass', 'compile:ts', 'bundle:libs']);
+gulp.task ('default', ['sass', 'compile:ts', 'bundle:libs', 'bundle:js']);
