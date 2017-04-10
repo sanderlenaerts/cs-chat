@@ -6,7 +6,7 @@
   "scripts": {
     "gulp": "gulp",
     "test": "node_modules/.bin/mocha -w",
-    "start": "npm install && cd client && npm install && npm install --only=dev && gulp compile && gulp bundle:js && cd .. && node server"
+    "start": "npm install && cd client && npm install && npm install --only=dev && gulp compile && gulp bundle:js && cd .. && node server &"
   },
   "repository": {
     "type": "git",
