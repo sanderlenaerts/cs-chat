@@ -15,32 +15,7 @@ var loginschema = {
       value: true,
       errorMessage: "Username cannot be empty"
     },
-    matches: {
-      options: [{min: 3, max: 10}],
-      errorMessage: "Password must be between 3 and 10 characters" // pass options to the validator with the options property as an array
-      // options: [/example/i] // matches also accepts the full expression in the first parameter
-    }
-  },
-  'password': {
-    notEmpty: {
-      value: true,
-      errorMessage: "Password cannot be empty"
-    },
-    matches: {
-      options: [{min: 5, max: 10}],
-      errorMessage: "Password must be between 5 and 10 characters" // pass options to the validator with the options property as an array
-      // options: [/example/i] // matches also accepts the full expression in the first parameter
-    }
-  }
-};
-
-var schema = {
- 'username': {
-    notEmpty: {
-      value: true,
-      errorMessage: "Username cannot be empty"
-    },
-    matches: {
+    isLength: {
       options: [{min: 3, max: 10}],
       errorMessage: "Username must be between 3 and 10 characters" // pass options to the validator with the options property as an array
       // options: [/example/i] // matches also accepts the full expression in the first parameter
@@ -51,7 +26,33 @@ var schema = {
       value: true,
       errorMessage: "Password cannot be empty"
     },
-    matches: {
+    isLength: {
+      options: [{min: 5, max: 10}],
+      errorMessage: "Password must be between 5 and 10 characters" // pass options to the validator with the options property as an array
+      // options: [/example/i] // matches also accepts the full expression in the first parameter
+    }
+  }
+};
+
+var schema = {
+ 'username': {
+
+    isLength: {
+      options: [{min: 3, max: 10}],
+      errorMessage: "Username must be between 3 and 10 characters" // pass options to the validator with the options property as an array
+      // options: [/example/i] // matches also accepts the full expression in the first parameter
+    },
+    notEmpty: {
+      value: true,
+      errorMessage: "Username cannot be empty"
+    }
+  },
+  'password': {
+    notEmpty: {
+      value: true,
+      errorMessage: "Password cannot be empty"
+    },
+    isLength: {
       options: [{min: 5, max: 10}],
       errorMessage: "Password must be between 5 and 10 characters" // pass options to the validator with the options property as an array
       // options: [/example/i] // matches also accepts the full expression in the first parameter
@@ -137,6 +138,8 @@ module.exports.login = function(req, res, next) {
   console.log(req.body);
 
   var errors = req.validationErrors();
+
+  console.log(errors);
 
   if (errors){
     res.status(400).json(errors);
