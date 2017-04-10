@@ -61,7 +61,8 @@ gulp.task('sass:w', ['sass'], function() {
     //gulp.watch('./js/**/*', ['js']);
 });
 
-gulp.task('compile', ['sass', 'compile:ts']);
+gulp.task('compile', ['sass', 'compile:ts', 'assets']);
+
 gulp.task('assets', function(){
     gulp.src([
         './app/assets',
