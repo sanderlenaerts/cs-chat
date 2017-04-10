@@ -7,9 +7,12 @@ const babel = require('gulp-babel');
 const uglify = require('gulp-uglify');
 const concat = require('gulp-concat');
 const tsc = require('gulp-typescript');
+const tsConfig = require('./tsconfig.json');
+
 const tsProject = tsc.createProject('./tsconfig.json');
 const sourcemaps = require('gulp-sourcemaps');
 const sysBuilder = require('systemjs-builder');
+
 const htmlreplace = require('gulp-html-replace');
 
 gulp.task('sass', function() {
@@ -41,13 +44,13 @@ gulp.task('bundle:libs', function () {
 
 // Compile TypeScript to JS
 gulp.task('compile:ts', function () {
-  return gulp
+  return tsProject
     .src([
         "./app/**/*.ts",
-        "!./app/node_modules/**/*.min.js"
+        "!app/node_modules/**/*.ts"
     ])
     .pipe(sourcemaps.init())
-    .pipe(tsc(tsProject))
+    .pipe(tsc(tsProject(tsConfig.compilerOptions)))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist'));
 });
