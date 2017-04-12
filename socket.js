@@ -49,6 +49,7 @@ module.exports = function(io) {
               type: 'continue',
               partner: clientInformation[staffInChat[uid].partnerId],
               chat: staffInChat[uid].chat,
+              ticket: staffInChat[uid].ticket
             });
 
             staffInChat[uid].socket = socket.id;
@@ -171,6 +172,14 @@ module.exports = function(io) {
       }
     }
 
+    socket.on('save-ticket', function(data){
+      let uid = data.uid;
+
+      if (staffInChat.hasOwnProperty(uid)){
+        staffInChat[uid].ticket = data.ticket;
+      }
+    })
+
     // Accept a new customer
     socket.on('match-customer', function(data){
       let uid = data.uid;
@@ -190,6 +199,7 @@ module.exports = function(io) {
         obj.name = staff[uid].name;
         obj.socket = staff[uid].socket;
         obj.chat = [];
+        obj.ticket = {}
         staffInChat[uid] = obj;
 
 
@@ -398,6 +408,7 @@ module.exports = function(io) {
           type: 'continue',
           partner: clientInformation[staffInChat[uid].partnerId],
           chat: staffInChat[uid].chat,
+          ticket: staffInChat[uid].ticket
       });
       }
     })

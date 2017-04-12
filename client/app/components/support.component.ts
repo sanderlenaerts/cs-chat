@@ -178,6 +178,13 @@ export class SupportFormComponent implements OnInit, OnChanges {
       }
     }
   }
+
+  fillForm(ticket){
+    console.log(ticket);
+
+    this.support.patchValue(ticket.support);
+  }
+
   checkOtherProceed(value){
     if (value = ''){
       // uncheck the checkbox

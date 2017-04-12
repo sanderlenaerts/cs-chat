@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map';
 import * as io from 'socket.io-client';
 import { AuthenticationService } from './authentication.service';
 import { Subject } from 'rxjs/Subject';
+import { Ticket } from '../models/ticket';
 
 @Injectable()
 export class ChatService {
@@ -102,6 +103,13 @@ export class ChatService {
     console.log('Get chat');
     this.socket.emit('getChat', {
       uid: localStorage.getItem('uid')
+    })
+  }
+
+  saveTicket(ticket: Ticket){
+    this.socket.emit('save-ticket', {
+      uid: localStorage.getItem('uid'),
+      ticket: ticket
     })
   }
 

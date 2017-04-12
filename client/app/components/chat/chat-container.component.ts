@@ -1,7 +1,7 @@
-import { Component, ViewEncapsulation, Output, OnInit, OnDestroy, trigger, transition, animate, style } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation, Output, OnInit, OnDestroy, trigger, transition, animate, style } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { AuthenticationService } from '../../services/authentication.service';
-
+import { SupportFormComponent } from '../support.component';
 import { Ticket } from '../../models/ticket';
 
 @Component({
@@ -33,9 +33,9 @@ import { Ticket } from '../../models/ticket';
 Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
         </button>
       </div>
-      <div class="controls">
+      <div class="controls" *ngIf="amountQueue >= 0">
         <section>
-          <p [ngClass]="active ? '' : 'padded'"><i class="fa fa-th-list" aria-hidden="true"></i>
+          <p><i class="fa fa-th-list" aria-hidden="true"></i>
 {{amountQueue}} waiting</p>
         </section>
       </div>
@@ -54,7 +54,7 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
           {{partner.email}}</p>
           </div>
         </section>
-        <section *ngIf="(amountQueue > 0)">
+        <section *ngIf="active">
           <button class="btn danger-btn full-btn" (click)="ticket.valid ? deleteModal.open() : detailsModal.open()" >Stop conversation</button>
         </section>
       </div>
@@ -139,6 +139,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   customer: any;
   partner: any;
   ticket: Ticket;
+
+  @ViewChild(SupportFormComponent) support: SupportFormComponent;
 
   constructor(private chatService: ChatService, private authenticationService: AuthenticationService){
     authenticationService.changeEmitted$.subscribe(
@@ -225,9 +227,11 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       data.support.email = this.partner.email;
     }
     this.ticket = data;
+    this.chatService.saveTicket(this.ticket);
   }
 
   private handleData(data){
+    console.log(data);
     if (data.type == 'start'){
       console.log(data);
       this.partner = data;
@@ -259,6 +263,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       this.active = true;
       this.chatDisabled = false;
       this.messages = data.chat;
+      this.ticket = data.ticket;
+      this.support.fillForm(data.ticket);
     }
     else if (data.type == 'isRegistered'){
       console.log(data.chat);

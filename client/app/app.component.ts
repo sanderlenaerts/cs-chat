@@ -50,6 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   authenticated: boolean;
   notification: Notification;
+  connection: any;
 
   ngOnInit(){
     this.authenticated = this.authenticationService.isLoggedIn();
@@ -58,6 +59,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     console.log('Destroying app component');
+    this.connection.unsubscribe();
   }
 
   constructor(private authenticationService: AuthenticationService, private router: Router, private notificationService: NotificationService, private chatService: ChatService){
@@ -81,7 +83,9 @@ export class AppComponent implements OnInit, OnDestroy {
      });
 
      if (this.chatService.getActiveConnection() == null){
-       this.chatService.connect();
+       this.connection = this.chatService.connect().subscribe(data => {
+          console.log('Connected to socket in app component');
+       });
     }
   }
 
