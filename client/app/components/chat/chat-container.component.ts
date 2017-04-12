@@ -3,7 +3,7 @@ import { ChatService } from '../../services/chat.service';
 import { AuthenticationService } from '../../services/authentication.service';
 import { SupportFormComponent } from '../support.component';
 import { Ticket } from '../../models/ticket';
-
+import { NotificationService } from '../../services/notification.service';
 @Component({
   selector: 'chat-container',
   encapsulation: ViewEncapsulation.None,
@@ -142,7 +142,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   @ViewChild(SupportFormComponent) support: SupportFormComponent;
 
-  constructor(private chatService: ChatService, private authenticationService: AuthenticationService){
+  constructor(private chatService: ChatService, private authenticationService: AuthenticationService, private notificationService: NotificationService){
     authenticationService.changeEmitted$.subscribe(
       authenticated => {
         this.isLoggedIn = authenticated;
@@ -256,6 +256,10 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       this.position = data.position;
     }
     else if (data.type == 'disableChat'){
+      this.notificationService.notify({
+        message: this.partner.name + " disconnected",
+        type: 'error'
+      })
       this.chatDisabled = true;
     }
     else if (data.type == 'continue'){

@@ -364,8 +364,8 @@ module.exports = function(io) {
       delete clientsInChat[clientId];
       delete staffInChat[uid];
 
-      endConversation(clientId);
-      endConversation(uid);
+      endConversation(clientId, 'customer');
+      endConversation(uid, 'staff');
       updateStaffQueue();
 
     }
@@ -378,10 +378,18 @@ module.exports = function(io) {
       }
     }
 
-    var endConversation = function(id){
-      if (io.sockets.connected.hasOwnProperty(id)) {
-        io.sockets.connected[id].emit('endConversation',{type: 'endConversation'});
+    var endConversation = function(id, type){
+      if (type == 'staff'){
+        if (io.sockets.connected.hasOwnProperty(staff[id].socket)) {
+          io.sockets.connected[staff[id].socket].emit('endConversation',{type: 'endConversation'});
+        }
       }
+      else {
+        if (io.sockets.connected.hasOwnProperty(clientInformation[id].socket)) {
+          io.sockets.connected[clientInformation[id].socket].emit('endConversation',{type: 'endConversation'});
+        }
+      }
+      
     }
 
     var removeFromQueue = function(uid){

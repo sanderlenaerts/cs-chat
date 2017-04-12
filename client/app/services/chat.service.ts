@@ -7,6 +7,7 @@ import * as io from 'socket.io-client';
 import { AuthenticationService } from './authentication.service';
 import { Subject } from 'rxjs/Subject';
 import { Ticket } from '../models/ticket';
+import { NotificationService } from './notification.service';
 
 @Injectable()
 export class ChatService {
@@ -15,7 +16,7 @@ export class ChatService {
   private url = 'http://localhost:3000';
   private connectionChange = new Subject<any>();
 
-  constructor(private http: Http, private authenticationService: AuthenticationService){
+  constructor(private http: Http, private authenticationService: AuthenticationService, private notificationService: NotificationService){
 
   }
 
@@ -41,7 +42,13 @@ export class ChatService {
     let options = new RequestOptions({ headers: headers });
 
     return this.http.post('/api/mail', JSON.stringify(data), options)
-      .map((response: Response) => response.json())
+      .map((response: Response) => {
+        this.notificationService.notify({
+          message: "A ticket was sent",
+          type: 'success'
+        })
+        return response.json()
+      })
   }
 
   getActiveConnection(){
@@ -49,7 +56,9 @@ export class ChatService {
   }
 
   stopConversation(){
-    this.socket.emit('stop-chat', {});
+    this.socket.emit('stop-chat', {
+      uid: localStorage.getItem('uid')
+    });
   }
 
   sendMessage(message){
@@ -185,18 +194,6 @@ export class ChatService {
     this.changeConnected(true);
     return observable;
   }
-
-
-
-  // startWork(){
-  //   return this.registerSocket(null);
-  // }
-
-  // quitWork(){
-  //   this.connection = null;
-  //   this.changeConnected(false);
-  //   this.socket.disconnect();
-  // }
 
   isConnected(){
     return !!this.socket;

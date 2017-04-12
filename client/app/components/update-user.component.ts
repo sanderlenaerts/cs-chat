@@ -132,7 +132,6 @@ export class UpdateUserComponent implements OnInit {
 
   doUpdate(){
     this.userService.updateUser(this.user.username, this.update.value).subscribe(data => {
-      //TODO: Success message
       this.notificationService.notify({
         message: this.user.username + " was successfully updated",
         type: 'success'
