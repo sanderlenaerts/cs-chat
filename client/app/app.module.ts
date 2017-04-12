@@ -19,7 +19,6 @@ import { ChatComponent } from './components/chat/chat.component';
 import { AdminComponent } from './components/admin.component';
 import { UsersComponent } from './components/users.component';
 import { RegisterComponent } from './components/register.component';
-import { ChatcontrolsComponent } from './components/chat/chatcontrols.component';
 import { UserInputComponent } from './components/chat/user-input.component';
 import { SupportFormComponent } from './components/support.component';
 import { DropdownComponent } from './components/dropdown.component';
@@ -85,7 +84,6 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     AdminComponent,
     UsersComponent,
     RegisterComponent,
-    ChatcontrolsComponent,
     UserInputComponent,
     SupportFormComponent,
     FocusDirective,

@@ -13,7 +13,7 @@ import { Ticket } from '../../models/ticket';
 
       <h3 *ngIf="!isLoggedIn && !active">We advise you to first carefully read the self-help section, as this might provide a solution to the issue(s) you may be experiencing.</h3>
 
-      <div *ngIf="!active && !isLoggedIn && registered && !!partner" class="has-errors">
+      <div *ngIf="!active && !isLoggedIn && registered && partner.name != null && partner.name != ''" class="has-errors">
         <p class="error">{{partner.name}} has disconnected from the chat
       </div>
       <div *ngIf="!active && !isLoggedIn && registered" class="btn-container">
@@ -28,28 +28,23 @@ import { Ticket } from '../../models/ticket';
     <chat class="chat" *ngIf="(registered && active) || isLoggedIn" [isLoggedIn]="isLoggedIn" [messages]="messages" [active]="active" [chatDisabled]="chatDisabled" [partner]="partner" (chatend)="disconnect($event)"></chat>
 
     <div class="control-group" *ngIf="isLoggedIn">
-      <div class="controls" *ngIf="isConnected && active">
+      <div class="controls" *ngIf="active">
         <button class="btn danger-btn full-btn" (click)="discardModal.open()" ><i class="fa fa-exclamation" aria-hidden="true"></i>
 Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
         </button>
       </div>
       <div class="controls">
-        <section *ngIf="!active">
-          <button *ngIf="isConnected" class="btn danger-btn full-btn" (click)="quitWork()" >Quit work</button>
-
-          <button *ngIf="!isConnected" class="btn success-btn full-btn" (click)="startWork()">Start work</button>
-        </section>
-        <section *ngIf="isConnected">
+        <section>
           <p [ngClass]="active ? '' : 'padded'"><i class="fa fa-th-list" aria-hidden="true"></i>
 {{amountQueue}} waiting</p>
         </section>
       </div>
-      <div class="controls" *ngIf="active && isConnected">
+      <div class="controls" *ngIf="active">
         <section>
             <button class="btn success-btn full-btn"
             (click)="detailsModal.open()">Ticket</button>
         </section>
-        <section [ngClass]="((isConnected && (amountQueue > 0)) || isConnected) ? 'divider' : ''" *ngIf="isConnected">
+        <section [ngClass]="(amountQueue > 0) ? 'divider' : ''">
           <div class="chat-data">
             <p><i class="fa fa-user-circle-o" aria-hidden="true"></i>
   {{partner.name}}</p>
@@ -59,11 +54,11 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
           {{partner.email}}</p>
           </div>
         </section>
-        <section *ngIf="isConnected && (amountQueue > 0)  || isConnected ">
+        <section *ngIf="(amountQueue > 0)">
           <button class="btn danger-btn full-btn" (click)="ticket.valid ? deleteModal.open() : detailsModal.open()" >Stop conversation</button>
         </section>
       </div>
-      <div class="controls" *ngIf="isConnected && (amountQueue > 0) && !active">
+      <div class="controls" *ngIf="(amountQueue > 0) && !active">
         <button class="btn success-btn full-btn" (click)="nextCustomer()">Next customer</button>
       </div>
     </div>
@@ -127,21 +122,20 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
     ]
 })
 
-export class ChatContainerComponent implements OnInit {
+export class ChatContainerComponent implements OnInit, OnDestroy {
   connection: any;
   isLoggedIn: boolean;
 
   //TODO: Look into changing it into an observable
   reset: boolean = false;
 
-  isConnected: boolean = false;
   messages: any[] = [];
   inQueue: boolean = false;
   active: boolean = false;
   chatDisabled: boolean = false;
   amountQueue: Number;
   position: Number;
-  registered: boolean = false;
+  registered: boolean;
   customer: any;
   partner: any;
   ticket: Ticket;
@@ -152,34 +146,29 @@ export class ChatContainerComponent implements OnInit {
         this.isLoggedIn = authenticated;
      });
 
-     chatService.changeConnectionEmitted$.subscribe(
-      connected => {
-        this.isConnected = connected;
-     });
+     
   }
 
   ngOnInit(){
+    console.log('Initting container');
     this.isLoggedIn = this.authenticationService.isLoggedIn();
+    this.connection = this.chatService.getActiveConnection().subscribe(data => {
+      this.handleData(data);
+    })
+    if (this.isLoggedIn){
+      this.chatService.getUpdates();
+      this.chatService.getChat();
+    }
+    else {
+      this.chatService.isRegistered();
+    }
   }
+
 
   getCustomerData(customer){
     this.registered = true;
     this.customer = customer;
-  }
-
-  startWork(){
-    this.connection = this.chatService.startWork().subscribe(data => {
-      // Do something with the data;
-      this.handleData(data);
-    })
-  }
-
-  quitWork(){
-    if (!this.active){
-      this.connection.unsubscribe();
-      this.active = false;
-      this.messages = [];
-    }
+    this.chatService.updateCustomer(customer);
   }
 
   ngOnDestroy(){
@@ -206,13 +195,11 @@ export class ChatContainerComponent implements OnInit {
   toggleQueue(){
     if (!this.inQueue){
       // Create the connection to socket.io
-      this.connection = this.chatService.joinQueue(this.customer).subscribe(data => {
-        this.handleData(data);
-      })
+      this.chatService.joinQueue();
     }
     else {
       // Stop the connection
-      this.connection.unsubscribe();
+      this.chatService.leaveQueue();
     }
     this.inQueue = !this.inQueue;
   }
@@ -242,15 +229,15 @@ export class ChatContainerComponent implements OnInit {
 
   private handleData(data){
     if (data.type == 'start'){
+      console.log(data);
       this.partner = data;
       this.active = true;
       this.chatDisabled = false;
     }
     else if (data.type == 'new-message'){
-      this.messages.push({
-        from: data.from,
-        text: data.text
-      });
+      console.log('new messages: ', data.messages);
+      console.log('Current messages: ', this.messages);
+      this.messages.push(data.messages);
     }
     else if (data.type == 'endConversation'){
       console.log('Clearing the conversation in container');
@@ -266,6 +253,21 @@ export class ChatContainerComponent implements OnInit {
     }
     else if (data.type == 'disableChat'){
       this.chatDisabled = true;
+    }
+    else if (data.type == 'continue'){
+      this.partner = data.partner;
+      this.active = true;
+      this.chatDisabled = false;
+      this.messages = data.chat;
+    }
+    else if (data.type == 'isRegistered'){
+      console.log(data.chat);
+      this.partner = data.partner;
+      this.registered = data.registered;
+      this.active = data.active;
+      this.inQueue = data.queue;
+      this.messages = data.chat;
+
     }
   }
 }

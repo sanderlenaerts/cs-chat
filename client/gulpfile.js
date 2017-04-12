@@ -12,7 +12,6 @@ const tsConfig = require('./tsconfig.json');
 const tsProject = tsc.createProject('./tsconfig.json');
 const sourcemaps = require('gulp-sourcemaps');
 const sysBuilder = require('systemjs-builder');
-
 const htmlreplace = require('gulp-html-replace');
 
 gulp.task('sass', function() {
@@ -81,4 +80,7 @@ gulp.task('bundle:js', function() {
 gulp.task('dev', ['sass:w']);
 
 //Default task for deployment compiling sass and typescript and bundling libraries
-gulp.task ('default', ['sass', 'compile:ts', 'bundle:libs']);
+gulp.task ('default', ['sass', 'compile:ts', 'bundle:libs'], function(){
+    gulp.watch('./app/sass/**/*.sass', ['sass']);
+    gulp.watch('./app/**/*.ts', ['compile:ts']);
+});

@@ -1,7 +1,7 @@
-import { Component, OnInit, style, trigger, transition, animate } from '@angular/core';
+import { Component, OnInit, OnDestroy, style, trigger, transition, animate } from '@angular/core';
 import { AuthenticationService } from './services/authentication.service';
 import { Router } from '@angular/router';
-
+import { ChatService } from './services/chat.service';
 import { NotificationService } from './services/notification.service';
 import { Notification } from './models/notification';
 import { NotificationComponent } from './components/notification.component';
@@ -46,16 +46,21 @@ Log out</a>
     ]
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   authenticated: boolean;
   notification: Notification;
 
   ngOnInit(){
     this.authenticated = this.authenticationService.isLoggedIn();
+    
   }
 
-  constructor(private authenticationService: AuthenticationService, private router: Router, private notificationService: NotificationService){
+  ngOnDestroy(){
+    console.log('Destroying app component');
+  }
+
+  constructor(private authenticationService: AuthenticationService, private router: Router, private notificationService: NotificationService, private chatService: ChatService){
     authenticationService.changeEmitted$.subscribe(
         authenticated => {
             this.authenticated = authenticated;
@@ -74,6 +79,10 @@ export class AppComponent implements OnInit {
               };
             }, 4000);
      });
+
+     if (this.chatService.getActiveConnection() == null){
+       this.chatService.connect();
+    }
   }
 
   signOut(connected){

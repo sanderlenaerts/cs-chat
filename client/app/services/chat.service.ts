@@ -27,7 +27,9 @@ export class ChatService {
   }
 
   nextCustomer(){
-    this.socket.emit('match-customer', {});
+    this.socket.emit('match-customer', {
+      uid: localStorage.getItem('uid')
+    });
   }
 
   sendSupportData(data){
@@ -50,20 +52,64 @@ export class ChatService {
   }
 
   sendMessage(message){
-    this.socket.emit('add-message', message);
+    let data = {
+      uid: localStorage.getItem('uid'),
+      message: message
+    }
+    this.socket.emit('add-message', data);
   }
 
-  joinQueue(customer) {
-    return this.registerSocket(customer);
+  isRegistered(){
+    this.socket.emit('isRegistered', {
+      uid: localStorage.getItem('uid')
+    })
+  }
+
+  joinQueue() {
+    this.socket.emit('joinQueue', {
+      uid: localStorage.getItem('uid')
+    })
+  }
+
+  leaveQueue(){
+    this.socket.emit('leaveQueue', {
+      uid: localStorage.getItem('uid')
+    })
+  }
+
+  updateCustomer(customer){
+    this.socket.emit('updatecustomer', {
+      uid: localStorage.getItem('uid'),
+      customer: customer
+    })
   }
 
   disconnect(){
     this.socket.disconnect();
   }
 
-  private registerSocket(d){
+  connect(){
+    return this.connectSocket(this.authenticationService.user);
+  }
+
+  getUpdates(){
+    this.socket.emit('update', {
+      uid: localStorage.getItem('uid')
+    })
+  }
+
+  getChat(){
+    console.log('Get chat');
+    this.socket.emit('getChat', {
+      uid: localStorage.getItem('uid')
+    })
+  }
+
+  private connectSocket(user){
+    console.log('Connecting socket: ', user);
+    this.socket = io("/");
     let observable = new Observable(observer => {
-      this.socket = io("/");
+      console.log('Connecting socket.io');
       this.socket.on('message', (data) => {
         observer.next(data);
       });
@@ -72,19 +118,26 @@ export class ChatService {
         console.log('connect');
         let userData;
         let type;
-        if (d !== null){
-          userData = d;
+        let uid = localStorage.getItem('uid');
+
+        if (user.name == ''){
+          userData = user;
           type = "register";
         }
         else {
           userData = this.authenticationService.user;
           type = "auth";
         }
-        this.socket.emit('data',
+        this.socket.emit('register',
         {
+          uid: uid,
           user: userData,
           type: type
         });
+      })
+
+      this.socket.on('identify', (data) => {
+        localStorage.setItem('uid', data.uid);
       })
 
       this.socket.on('match-complete', (data) => {
@@ -92,7 +145,6 @@ export class ChatService {
       })
 
       this.socket.on('endConversation', (data) => {
-        console.log('Ending the conversation - ChatService')
         observer.next(data);
       })
 
@@ -108,8 +160,16 @@ export class ChatService {
         observer.next(data);
       })
 
+      this.socket.on('continue', (data) => {
+        observer.next(data);
+      })
+
+      this.socket.on('isRegistered', (data) => {
+        observer.next(data);
+      })
+
       return () => {
-        this.socket.disconnect();
+        this.socket.emit('disconenct');
         this.changeConnected(false);
       };
     })
@@ -118,15 +178,17 @@ export class ChatService {
     return observable;
   }
 
-  startWork(){
-    return this.registerSocket(null);
-  }
 
-  quitWork(){
-    this.connection = null;
-    this.changeConnected(false);
-    this.socket.disconnect();
-  }
+
+  // startWork(){
+  //   return this.registerSocket(null);
+  // }
+
+  // quitWork(){
+  //   this.connection = null;
+  //   this.changeConnected(false);
+  //   this.socket.disconnect();
+  // }
 
   isConnected(){
     return !!this.socket;

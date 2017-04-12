@@ -4,6 +4,7 @@ var staff = {}
 
 var availableStaff = {}
 
+var clients = {};
 // holds all clients waiting
 var queue = [];
 
@@ -14,7 +15,6 @@ var clientsInChat = {}
 
 var clientInformation = {}
 
-var customerId = 1;
 
 module.exports = function(io) {
   io.sockets.on('connection', function(socket){
@@ -22,61 +22,158 @@ module.exports = function(io) {
 
     socket.emit('connect', {});
 
-    //register the user in a list of either clients or staff
-    socket.on('data', function(data){
+    socket.on('register', function(data){
       console.log("Registering user: ", data);
+      let uid;
+
+      if (data.uid == null){
+        uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+      }
+      else {
+        uid = data.uid;
+      }
 
       if (data.type == "auth"){
         // logged in user
-        var client = new Object();
-        client.name = data.user.name;
+        console.log("Register logged in user");
+        if (staff.hasOwnProperty(uid)){
+          // update the socket id
+          staff[uid].socket = socket.id;
+          staff[uid].name = data.user.name;
 
-        //Save the data about staff member to object literal
-        staff[socket.id] = client;
+          if (staffInChat.hasOwnProperty(uid)){
+            socket.emit('continue', {
+              type: 'continue',
+              partner: clientInformation[staffInChat[uid].partnerId],
+              chat: staffInChat[uid].chat,
+            });
 
-        //Emit how many people are in the queue
+            staffInChat[uid].socket = socket.id;
+            clientsInChat[staffInChat[uid].partnerId].partner = socket.id;
+          }
+        }
+        else {
+          var member = new Object();
+          member.name = data.user.name;
+          member.socket = socket.id;
+
+          staff[uid] = member;
+
+
+          console.log('Staff after register: ', staff);
+        }
+
+        // Immediately show the member how many users are in queue
         if (io.sockets.connected[socket.id]) {
           io.sockets.connected[socket.id].emit('queue-length',{type:'queue-length', length: queue.length});
         }
       }
+      
       else {
-        // customer
+        console.log("Register customer");
+        if (clientInformation.hasOwnProperty(uid)){
+          clientInformation[uid].socket = socket.id;
 
-        // Push it to the queue
-        queue.push(socket.id);
+          if(isClientInChat(uid)){
+            clientsInChat[uid].socket = socket.id;
+            staffInChat[clientsInChat[uid].partnerId].partner = socket.id;
 
 
-        var obj = new Object();
-        obj.name = data.user.name;
-        obj.description = data.user.description;
-        obj.email = data.user.email;
-        obj.ip = socket.handshake.address;
+          }
+        }
+        else {
+          var client = new Object();
+          client.name = '';
+          client.description = '';
+          client.email = '';
+          client.ip = socket.handshake.address;
+          client.socket = socket.id;
 
-        clientInformation[socket.id] = obj;
+          clientInformation[uid] = client;
+        }
+      }
 
-        updateQueueAmount();
+      socket.emit('identify', {
+        uid: uid
+      })
+    })
+
+    socket.on('isRegistered', function(data){
+      let uid = data.uid;
+      var registered = false;
+      var inQueue = false;
+      var active = false;
+      var partner = {
+        name: ''
+      }
+
+      var chat = [];
+
+      if (clientInformation.hasOwnProperty(uid)){
+        registered =  clientInformation[uid].description != ''
+          && clientInformation[uid].name != ''
+          && clientInformation[uid].email != ''
+      }
+
+      if(queue.indexOf(uid) >= 0){
+        inQueue = true;
         updateCustomerQueuePosition();
       }
 
+      if (isClientInChat(uid)){
+        active = true;
+        partner = staff[clientsInChat[uid].partnerId];
+        chat = clientsInChat[uid].chat;
+
+        console.log(chat);
+      }
+
+      socket.emit('isRegistered', {
+        type: 'isRegistered',
+        registered: registered,
+        queue: inQueue,
+        active: active,
+        partner: partner,
+        chat: chat
+      })
     })
 
-    var updateQueueAmount = function(){
+    socket.on('joinQueue', function(data){
+      let uid = data.uid;
+
+      queue.push(uid);
+
+      updateStaffQueue();
+      updateCustomerQueuePosition();
+    })
+
+    socket.on('leaveQueue', function(data){
+      let uid = data.uid;
+      removeFromQueue(uid);
+    })
+
+    var updateStaffQueue = function(){
       // let the staff know the queue length
       for (var key in staff) {
-        if (io.sockets.connected[key]) {
-          io.sockets.connected[key].emit('queue-length',{type:'queue-length', length: queue.length});
+        
+        if (io.sockets.connected[staff[key].socket]) {
+          io.sockets.connected[staff[key].socket].emit('queue-length',{type:'queue-length', length: queue.length});
         }
       }
       // Let the staff who are in chat know the queue length
       for (var key in staffInChat){
-        if (io.sockets.connected[key]) {
-          io.sockets.connected[key].emit('queue-length',{type:'queue-length', length: queue.length});
+        if (io.sockets.connected[staffInChat[key].socket]) {
+          io.sockets.connected[staffInChat[key].socket].emit('queue-length',{type:'queue-length', length: queue.length});
         }
       }
     }
 
     // Accept a new customer
     socket.on('match-customer', function(data){
+      let uid = data.uid;
 
       console.log('Trying to match customer to staff');
       var obj = new Object();
@@ -84,29 +181,30 @@ module.exports = function(io) {
       if (queue.length > 0){
 
         // Get the socket id from the first person in the queue and remove it
-        obj.partner = queue.shift();
+        let paired = queue.shift();
+        obj.partner = clientInformation[paired].socket;
+        obj.partnerId = paired;
 
+        console.log('Staff member; ', staff[uid]);
         // Add the socket id to the partner property of a staff member in chat
-        obj.name = staff[socket.id].name;
-        staffInChat[socket.id] = obj;
+        obj.name = staff[uid].name;
+        obj.socket = staff[uid].socket;
+        obj.chat = [];
+        staffInChat[uid] = obj;
 
 
         // Adding object to object literal of clients in chat
+
         var client = new Object();
-        client.partner = socket.id;
-        client.name = "Customer" + customerId;
-        clientsInChat[obj.partner] = client;
+        client.partner = staff[uid].socket;
+        client.name = clientInformation[paired].name;
+        client.socket = clientInformation[paired].socket;
+        client.partnerId = uid;
+        client.chat = [];
 
-        console.log("Clients in chat: ", clientsInChat);
-        console.log("Staff in chat: ", staffInChat);
+        clientsInChat[paired] = client;
 
-        //Remove staff member from available staff
-        if (staff.hasOwnProperty(socket.id)){
-          // delete it from the available staff
-          delete staff[socket.id];
-        }
-
-        var clientInfo = clientInformation[obj.partner];
+        var clientInfo = clientInformation[paired];
 
         clientInfo.type = 'start';
 
@@ -116,145 +214,157 @@ module.exports = function(io) {
         }
 
         // Send a "start chatting" message to everyone
-        if (io.sockets.connected[socket.id]) {
-          io.sockets.connected[socket.id].emit('match-complete', clientInfo);
+        if (io.sockets.connected[obj.socket]) {
+          io.sockets.connected[obj.socket].emit('match-complete', clientInfo);
         }
         if (io.sockets.connected[obj.partner]){
           io.sockets.connected[obj.partner].emit('match-complete', newObj);
         }
 
-        updateQueueAmount();
+        updateStaffQueue();
         updateCustomerQueuePosition();
 
       }
     })
 
-    var clientInQueue = function() {
-      return queue.indexOf(socket.id) > -1;
+    var clientInQueue = function(uid) {
+      return queue.indexOf(uid) > -1;
     }
+
+    var findId = function(socket){
+      for (var key in staff){
+        if (staff[key].socket == socket){
+          return key;
+        }
+      }
+
+      for (var key in clientInformation){
+        if (clientInformation[key].socket == socket){
+          return key;
+        }
+      }
+
+      return null;
+    }
+
+    socket.on('updatecustomer', function(data){
+      let uid = data.uid;
+      if(clientInformation.hasOwnProperty(uid)){
+        clientInformation[uid].name = data.customer.name;
+        clientInformation[uid].description = data.customer.description;
+        clientInformation[uid].email = data.customer.email;
+      }
+    })
 
     // When closing the browser
     socket.on('disconnect', function(data){
       console.log('Disconnecting ' + socket.id);
-      // if client, remove from queue, or stop the chat
-      // When stopping the chat, put staff member back to available staff
-      if (isClient()){
-        if (clientInQueue()){
-          removeFromQueue();
-          updateQueueAmount();
+      let socketId = socket.id;
+      let uid = findId(socketId);
 
+      if (uid != null){
+        setTimeout(function () {
+          if (clientInformation.hasOwnProperty(uid)){
+            let disconnect = clientInformation[uid].socket == socket.id;
 
-        }
-        else {
-          // If not in queue, client's in chat
-          stopConversationByClient();
-        }
+            if (disconnect){
+              // Check the queue and in chat
+              if (clientInQueue(uid)){
+                removeFromQueue(uid);
+              }
+              else if (isClientInChat(uid)){
+                //TODO: removeClientFromChat(uid);
+              }
 
-        if (clientInformation.hasOwnProperty(socket.id)){
-          delete clientInformation[socket.id];
-        }
-      }
-      else if (isStaff()){
-        if (isStaffAvailable()){
-          removeAvailableStaff();
-        }
-        else if (isStaffInChat()) {
-          // he could be chatting with someone
-          stopConversationByStaff();
-        }
-        else {
-          // if he is not marked as available and he is not chatting with someone he is just connected
-          removeStaff();
-        }
-      }
-      else {
-        // error, this scenario should not be possible
+              //TODO: Remove from clientInformation
+            }
+            else {
+              // The user reconnected within 10 seconds and now has a new socket id
+            }
+          }
+          else {
+            let disconnect = staff[uid].socket == socket.id;
+
+            if (disconnect){
+              // Check the queue and in chat
+              if (isStaffInChat(uid)){
+                //TODO: removeStaffFromChat(uid);
+              }
+
+              //TODO: Remove from staff
+            }
+            else {
+              // The user reconnected within 10 seconds and now has a new socket id
+            }
+          }
+        }, 10000);
       }
     })
 
-    var removeAvailableStaff = function(){
-      delete availableStaff[socket.id];
+    var removeStaff = function(uid){
+      delete staff[uid];
     }
 
-    var removeStaff = function(){
-      console.log('Deleting staff: ', staff);
-      delete staff[socket.id];
-      console.log('Deleted staff: ', staff);
-
+    var isClient = function(uid){
+      return (clientsInChat.hasOwnProperty(uid) || (queue.indexOf(uid) > -1));
     }
 
-    var isClient = function(){
-      return (clientsInChat.hasOwnProperty(socket.id) || (queue.indexOf(socket.id) > -1));
+    var isStaff = function(uid){
+      return (staffInChat.hasOwnProperty(uid) || staff.hasOwnProperty(uid));
     }
 
-    var isStaff = function(){
-      return (staffInChat.hasOwnProperty(socket.id) || staff.hasOwnProperty(socket.id));
+
+    var isClientInChat = function(uid){
+      return clientsInChat.hasOwnProperty(uid);
     }
 
-    var isStaffAvailable = function(){
-      return availableStaff.hasOwnProperty(socket.id);
-    }
-
-    var isStaffInChat = function(){
-      return staffInChat.hasOwnProperty(socket.id);
+    var isStaffInChat = function(uid){
+      return staffInChat.hasOwnProperty(uid);
     }
 
     socket.on('stop-chat', function(data){
+      let uid = data.uid;
       // When manually stopping the chat
       //Check if it's a client
-      if (clientsInChat.hasOwnProperty(socket.id)){
+      if (clientsInChat.hasOwnProperty(uid)){
         // it's a client
-        stopConversationByClient();
+        stopConversationByClient(uid);
       }
       else {
-        if (staffInChat.hasOwnProperty(socket.id)){
-          stopConversationByStaff();
+        if (staffInChat.hasOwnProperty(uid)){
+          stopConversationByStaff(uid);
         }
       }
-
     })
 
-    var stopConversationByClient = function(){
-      var staffId = clientsInChat[socket.id].partner;
-      delete clientsInChat[socket.id];
+    var stopConversationByClient = function(uid){
+      var staffId = clientsInChat[uid].partnerId;
+      delete clientsInChat[uid];
 
-      // Need to put staff back to avaiable staff members before deleting
-      var obj = staffInChat[staffId];
-      staff[staffId] = obj;
-
-      // Now we can safely delete it from the the staff in chat object
       delete staffInChat[staffId];
 
       disableChat(staffId);
-      updateQueueAmount();
+      updateStaffQueue();
     }
 
-    var stopConversationByStaff = function(){
+    var stopConversationByStaff = function(uid){
       console.log('Stopping conversation by staff');
-      var clientId = staffInChat[socket.id].partner;
-
-      var obj = new Object();
-      obj.name = staffInChat[socket.id].name;
+      var clientId = staffInChat[uid].partnerId;
 
       delete clientsInChat[clientId];
-      delete staffInChat[socket.id];
-
-      staff[socket.id] = obj;
+      delete staffInChat[uid];
 
       endConversation(clientId);
-      endConversation(socket.id);
-      updateQueueAmount();
+      endConversation(uid);
+      updateStaffQueue();
 
-      if (clientInformation.hasOwnProperty(clientId)){
-        delete clientInformation[clientId];
-      }
     }
 
     var disableChat = function(id){
       console.log('disableChat');
-      if (io.sockets.connected.hasOwnProperty(id)) {
+      if (io.sockets.connected.hasOwnProperty(staff[id].socket)) {
         console.log('Has property so should emit');
-        io.sockets.connected[id].emit('disableChat',{type: 'disableChat'});
+        io.sockets.connected[staff[id].socket].emit('disableChat',{type: 'disableChat'});
       }
     }
 
@@ -264,51 +374,87 @@ module.exports = function(io) {
       }
     }
 
-    var removeFromQueue = function(){
-      var index = queue.indexOf(socket.id);
+    var removeFromQueue = function(uid){
+      var index = queue.indexOf(uid);
       if (index > -1) {
         queue.splice(index, 1);
       }
+      updateStaffQueue();
       updateCustomerQueuePosition();
 
     }
 
+    socket.on('getChat', function(data){
+      let uid = data.uid;
+      console.log('Getting chat');
+
+      console.log("in chat staff? ", staffInChat[uid]);
+
+      console.log("staff member: ", staff[uid]);
+
+      if (staffInChat.hasOwnProperty(uid)){
+        console.log('continueee');
+        socket.emit('continue', {
+          type: 'continue',
+          partner: clientInformation[staffInChat[uid].partnerId],
+          chat: staffInChat[uid].chat,
+      });
+      }
+    })
+
+    socket.on('update', function(data){
+      let uid = data.uid;
+
+      if (staff.hasOwnProperty(uid)){
+        updateStaffQueue();
+      }
+    })
+
     //Leaving the queue
     socket.on('stopQueue', function(data){
       removeFromQueue();
-      updateQueueAmount();
+      updateStaffQueue();
     })
 
-    // Make staff member available
-    socket.on('markAvailable', function(data){
-      var staffMember = staff[socket.id];
+    socket.on('add-message', function(data){
+      
+      let uid = data.uid;
+      let message = data.message;
 
-      // Set the staff member in the available literal
-      availableStaff[socket.id] = staffMember;
-
-      // Delete from staff
-      delete staff[socket.id];
-    })
-
-    socket.on('markUnavailable', function(data){
-      var staffMember = availableStaff[socket.id];
-
-      staff[socket.id] = staffMember;
-
-      delete availableStaff[socket.id];
-    })
-
-
-    socket.on('add-message', function(message){
-      var partner = findPartner();
-
-      var name = findName();
+      var partnerSocket = findPartner(uid);
+      var name = findName(uid);
 
       var messages = message.split("\n");
 
-      if (io.sockets.connected[partner]) {
-        io.sockets.connected[partner].emit('message',{type:'new-message', text: messages, from: name});
-        io.sockets.connected[socket.id].emit('message', {type: 'new-message', text: messages, from: name});
+      var msg = {
+        from: name,
+        text: messages
+      }
+
+      console.log(msg);
+      console.log('Origin of emssage: ', uid);
+      console.log('Socket found: ', partnerSocket);
+
+      if (staffInChat.hasOwnProperty(uid)){
+        console.log('Sent by staff');
+        staffInChat[uid].chat.push(msg);
+        clientsInChat[staffInChat[uid].partnerId].chat.push(msg);
+      }
+
+      if (clientsInChat.hasOwnProperty(uid)){
+        console.log('Sent by customer');
+        clientsInChat[uid].chat.push(msg);
+        staffInChat[clientsInChat[uid].partnerId].chat.push(msg);
+      }
+
+      if (io.sockets.connected[partnerSocket]) {
+        console.log('SENDING MESSAGE TO CUSTOMER AND STAFF');
+        console.log(partnerSocket);
+        io.to(partnerSocket).emit('message',{type:'new-message', messages: msg});
+        io.to(socket.id).emit('message',{type:'new-message', messages: msg});
+
+        // io.sockets.connected[partnerSocket].emit('message',{type:'new-message', messages: msg});
+        // io.sockets.connected[socket.id].emit('message', {type: 'new-message', messages: msg});
       }
     })
 
@@ -322,32 +468,33 @@ module.exports = function(io) {
     var sendPositionInQueue = function(id){
       var index = queue.indexOf(id);
       var position = index + 1;
-      if (io.sockets.connected[id]) {
-        io.sockets.connected[id].emit('queue-position',{type:'queue-position', position: position});
+      if (io.sockets.connected[clientInformation[id].socket]) {
+        io.sockets.connected[clientInformation[id].socket].emit('queue-position',{type:'queue-position', position: position});
       }
     }
 
-    var findName = function(){
-      if (clientsInChat.hasOwnProperty(socket.id)){
-        return clientInformation[socket.id].name;
+    var findName = function(uid){
+      if (clientsInChat.hasOwnProperty(uid)){
+        return clientInformation[uid].name;
       }
       else {
-        if (staffInChat.hasOwnProperty(socket.id)){
-          return staffInChat[socket.id].name;
+        if (staffInChat.hasOwnProperty(uid)){
+          return staff[uid].name;
         }
       }
     }
 
-    var findPartner = function(){
-      if (clientsInChat.hasOwnProperty(socket.id)){
-        return clientsInChat[socket.id].partner;
+    var findPartner = function(uid){
+      if (clientsInChat.hasOwnProperty(uid)){
+        return clientsInChat[uid].partner;
       }
       else {
-        if (staffInChat.hasOwnProperty(socket.id)){
-          return staffInChat[socket.id].partner;
+        if (staffInChat.hasOwnProperty(uid)){
+          return staffInChat[uid].partner;
         }
       }
     }
-
   });
+
+  
 }
