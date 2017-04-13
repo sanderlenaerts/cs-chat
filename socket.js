@@ -278,30 +278,38 @@ module.exports = function(io) {
             let disconnect = clientInformation[uid].socket == socket.id;
 
             if (disconnect){
+
+              clientInformation[uid].name = '';
+              clientInformation[uid].description = '';
+              clientInformation[uid].email = '';
+
               // Check the queue and in chat
               if (clientInQueue(uid)){
                 removeFromQueue(uid);
               }
               else if (isClientInChat(uid)){
-                //TODO: removeClientFromChat(uid);
+                endConversation(uid, 'customer');
+                disableChat(clientsInChat[uid].partnerId, 'staff');
+                delete staffInChat[clientsInChat[uid].partnerId];
+                delete clientsInChat[uid];
               }
-
-              //TODO: Remove from clientInformation
             }
             else {
               // The user reconnected within 10 seconds and now has a new socket id
             }
           }
-          else {
+          else if (staff.hasOwnProperty(uid)){
             let disconnect = staff[uid].socket == socket.id;
 
             if (disconnect){
               // Check the queue and in chat
               if (isStaffInChat(uid)){
-                //TODO: removeStaffFromChat(uid);
+                endConversation(uid, 'staff');
+                endConversation(staffInChat[uid].partnerId, 'customer');
+                delete clientsInChat[staffInChat[uid].partnerId];
+                delete staffInChat[uid];
+                
               }
-
-              //TODO: Remove from staff
             }
             else {
               // The user reconnected within 10 seconds and now has a new socket id
