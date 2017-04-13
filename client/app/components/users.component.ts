@@ -28,7 +28,7 @@ import { SearchComponent } from './search.component';
         <p>{{user.role}}</p>
       </div>
       <p class="username">{{user.name}} ({{user.username}})</p>
-      <div class="update-user" [routerLink]="['/admin/user', user.username]">
+      <div *ngIf="user.username !== 'admin'" class="update-user" [routerLink]="['/admin/user', user.username]">
         <i class="fa fa-pencil" aria-hidden="true"></i>
       </div>
     </article>

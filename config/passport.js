@@ -9,7 +9,7 @@ passport.use(new LocalStrategy({
   },
   function(username, password, done) {
     console.log('test');
-    User.findOne({ username: username }, function (err, user) {
+    User.findOne({ username: username.toLowerCase() }, function (err, user) {
       console.log(username);
       console.log(user);
       if (err) {

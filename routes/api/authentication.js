@@ -96,7 +96,7 @@ module.exports.register = function(req, res, next) {
   }
   else {
     user.name = req.body.name;
-    user.username = req.body.username;
+    user.username = req.body.username.toLowerCase().replace(/ /g,'');
 
     user.setPassword(req.body.password);
 

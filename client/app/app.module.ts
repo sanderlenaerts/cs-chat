@@ -28,6 +28,7 @@ import { NotificationComponent } from './components/notification.component';
 
 // Validators
 import { EmailValidator } from './components/validators/email.validator';
+import { WhitespaceValidator } from './components/validators/whitespace.validator';
 
 // Services
 import { CookieService } from 'angular2-cookie/services/cookies.service';

@@ -14,7 +14,7 @@ module.exports.getUsers = function(req, res, next) {
 };
 
 module.exports.deleteUser = function(req, res, next) {
-  User.remove({username: req.body.username}, function(err) {
+  User.remove({username: req.body.username.toLowerCase()}, function(err) {
     if (err){
       next(err);
     }
@@ -25,7 +25,7 @@ module.exports.deleteUser = function(req, res, next) {
 };
 
 module.exports.getUser = function(req, res, next) {
-  User.findOne({username: req.query.username}, function(err, user) {
+  User.findOne({username: req.query.username.toLowerCase()}, function(err, user) {
     if (err){
       next(err);
     }
@@ -41,7 +41,7 @@ module.exports.getUser = function(req, res, next) {
 };
 
 module.exports.updateUser = function(req, res, next) {
-  var username = req.params.username;
+  var username = req.params.username.toLowerCase();
 
   User.findOneAndUpdate({ "username": username }, { "$set": { "name": req.body.name, "role": req.body.role}}).exec(function(err, user){
      if(err) {

@@ -3,6 +3,7 @@ import { Component, OnInit, style, state, animate, transition, trigger, ViewEnca
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
+import { WhitespaceValidator } from './validators/whitespace.validator';
 
 // RxJS operators
 import 'rxjs/add/operator/map';
@@ -23,24 +24,23 @@ import 'rxjs/add/observable/throw';
         </li>
       </div>
       <form *ngIf="!submitted" (ngSubmit)="doRegister()" [formGroup]="register">
-        <div *ngIf=" register.controls['username'].hasError('minlength') && register.controls['username'].touched" class="alert alert-danger">The username must be at least 3 characters long</div>
+       <div *ngIf=" register.controls['username'].hasError('whitespace')&& register.controls['username'].dirty" class="alert alert-danger">The username cannot contain whitespaces</div>
 
-        <div *ngIf=" register.controls['username'].hasError('maxlength')&& register.controls['username'].dirty" class="alert alert-danger">The username cannot be longer than 10 characters</div>
-
+        <div class="alert" [ngClass]="((register.controls['username'].hasError('minlength') || register.controls['username'].hasError('maxlength'))  && register.controls['name'].dirty) ? 'alert-danger' : ''">The username must be between 3 and 10 characters long
+        </div>
         <label for="username">Username</label>
         <input required id="username" type="text" name="username" placeholder="Username" [formControl]="register.controls['username']">
 
-        <div *ngIf=" register.controls['name'].hasError('minlength') && register.controls['name'].dirty" class="alert alert-danger">The name must be at least 6 characters long</div>
-
-        <div *ngIf=" register.controls['name'].hasError('maxlength') && register.controls['name'].dirty" class="alert alert-danger">The name cannot be longer than 20 characters</div>
+        <div class="alert" [ngClass]="((register.controls['name'].hasError('minlength') || register.controls['name'].hasError('maxlength'))  && register.controls['name'].dirty) ? 'alert-danger' : ''">The name must be between 6 and 20 characters long
+        </div>
 
         <label for="name">Name</label>
         <input required id="name" type="text" name="name" placeholder="Name" [formControl]="register.controls['name']">
 
-        <div *ngIf=" register.controls['password'].hasError('minlength') && register.controls['password'].dirty" class="alert alert-danger">The password must be at least 5 characters long</div>
+        <div class="alert" [ngClass]="((register.controls['password'].hasError('minlength') || register.controls['password'].hasError('maxlength'))  && register.controls['name'].dirty) ? 'alert-danger' : ''">The password must be between 5 and 10 characters long
+        </div>
 
-        <div *ngIf=" register.controls['password'].hasError('maxlength')&& register.controls['password'].dirty" class="alert alert-danger">The password cannot be longer than 10 characters</div>
-
+    
         <label for="password">Password</label>
         <input required id="password" type="password" name="password" value="" placeholder="Password" [formControl]="register.controls['password']">
 
@@ -72,7 +72,7 @@ export class RegisterComponent implements OnInit {
   ngOnInit(){
     // Building the form and adding validation on the input fields
     this.register = this.fb.group({
-      username: [null, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(10)])],
+      username: [null, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(10), WhitespaceValidator.hasNoWhiteSpace])],
       name: [null, Validators.compose([Validators.required, Validators.minLength(6), Validators.maxLength(20)])],
       password: [null, Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(10)])],
       role: ['USER', Validators.required]

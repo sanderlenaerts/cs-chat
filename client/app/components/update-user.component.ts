@@ -118,6 +118,14 @@ export class UpdateUserComponent implements OnInit {
      this.userService.getUser(params['username']).subscribe(data => {
        console.log(data);
        this.user = data;
+       if (this.user.username.toLowerCase() === 'admin'){
+          this.router.navigate(['/admin/users']);
+          this.notificationService.notify({
+              message: "You cannot edit the main admin account",
+              type: 'error'
+          })
+       }
+
        this.update.patchValue({
          username: data.username,
          name: data.name,
@@ -127,9 +135,9 @@ export class UpdateUserComponent implements OnInit {
        error => {
          this.router.navigate(['/admin/users']);
          this.notificationService.notify({
-          message: error,
-          type: 'error'
-        })
+            message: error,
+            type: 'error'
+         })
        });
    });
   }
