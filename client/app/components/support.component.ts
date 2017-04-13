@@ -160,13 +160,10 @@ export class SupportFormComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(change: SimpleChanges){
-    console.log(change);
     if (change.hasOwnProperty('customer')){
       var customer = change['customer'];
-      console.log(customer);
 
       if (customer.currentValue){
-        console.log(customer.currentValue.name);
         this.support.patchValue({
           name: customer.currentValue.name
         })
@@ -180,8 +177,6 @@ export class SupportFormComponent implements OnInit, OnChanges {
   }
 
   fillForm(ticket){
-    console.log(ticket);
-
     this.support.patchValue(ticket.support);
   }
 

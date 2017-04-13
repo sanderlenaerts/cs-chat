@@ -150,7 +150,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(){
-    console.log('Initting container');
     this.isLoggedIn = this.authenticationService.isLoggedIn();
     this.connection = this.chatService.getActiveConnection().subscribe(data => {
       this.handleData(data);
@@ -228,20 +227,15 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   }
 
   private handleData(data){
-    console.log(data);
     if (data.type == 'start'){
-      console.log(data);
       this.partner = data;
       this.active = true;
       this.chatDisabled = false;
     }
     else if (data.type == 'new-message'){
-      console.log('new messages: ', data.messages);
-      console.log('Current messages: ', this.messages);
       this.messages.push(data.messages);
     }
     else if (data.type == 'endConversation'){
-      console.log('Clearing the conversation in container');
       this.inQueue = false;
       this.messages = [];
       this.active = false;
@@ -268,7 +262,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
       this.support.fillForm(data.ticket);
     }
     else if (data.type == 'isRegistered'){
-      console.log(data.chat);
       this.partner = data.partner;
       this.registered = data.registered;
       this.active = data.active;

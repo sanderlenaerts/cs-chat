@@ -35,12 +35,6 @@ var mapping = {
 var mail = function(req, res, next){
 
   var data = req.body;
-
-  console.log(data);
-
-  console.log(data.support.otherFix);
-  console.log(data.support.otherProceed);
-
   var content = "";
   var contentHtml = "<style> .container { font-family: Tahoma; margin: 5vh auto; padding: 5vh 5%; background-color: #ecf0f1; border-radius: 15px; color: #333; max-width: 560px; } h1, h2 { font-weight: 100; margin: 0; } h1 { display: inline-block; float: right; color: #bdc3c7; } .company { color: #333; float: none; display: inline-block; font-weight: 600; font-family: Verdana; } h2 { clear: both; margin-top: 20px; background-color: #e74c3c; padding: 5px 15px; border-radius: 15px; display: inline-block; color: white; font-size: 1rem; } span { padding-right: 20px; display: inline-block; min-width: 165px; text-decoration: underline; } p { margin: 8px 0; } .chat p { vertical-align: middle; font-size: 0.8rem; margin: 2px 0 } .chat p:first-child { width: 20%; min-width: 50px; max-width: 150px; margin: 5px 5px 0 0 ; color: white; padding: 5px 12px; display: inline-block; color: #2ecc71; } .chat p:nth-child(2n){ display: inline-block; width: 70%; } .chat p.support { color: #3498db; } .big { width: 25%; min-width: 165px; display: inline-block; padding-right: 20px; } .big-content { display: inline-block; width: calc(100% - 220px); vertical-align: text-top; }</style><div class='container'><h1 class='company'>HQ N.D.C.</h1><h1>Chat Ticket</h1><section class='customer'><h2>Customer information</h2>";
 
@@ -148,8 +142,6 @@ var mail = function(req, res, next){
   //loop over the chat Messages
   for (var i = 0; i < data.chat.length; i++){
     contentHtml += "<div><p class='support'>" + data.chat[i].from + "</p><p>";
-
-    console.log(data.chat[i].text);
 
     for (var j = 0; j < data.chat[i].text.length; j++){
       contentHtml += "" + data.chat[i].text[j] + "";

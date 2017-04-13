@@ -95,9 +95,7 @@ export class RegisterComponent implements OnInit {
           err => {
             this.submitted = false;
             this.errors = [];
-            console.log(err.json());
             for (var error of err.json()){
-              console.log(error.msg);
               this.errors.push(error.msg);
             }
           }

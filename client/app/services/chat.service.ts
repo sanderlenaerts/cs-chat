@@ -109,7 +109,6 @@ export class ChatService {
   }
 
   getChat(){
-    console.log('Get chat');
     this.socket.emit('getChat', {
       uid: localStorage.getItem('uid')
     })
@@ -123,16 +122,13 @@ export class ChatService {
   }
 
   private connectSocket(user){
-    console.log('Connecting socket: ', user);
     this.socket = io("/");
     let observable = new Observable(observer => {
-      console.log('Connecting socket.io');
       this.socket.on('message', (data) => {
         observer.next(data);
       });
 
       this.socket.on('connect', (data) => {
-        console.log('connect');
         let userData;
         let type;
         let uid = localStorage.getItem('uid');

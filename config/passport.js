@@ -8,12 +8,8 @@ passport.use(new LocalStrategy({
     passwordField: 'password'
   },
   function(username, password, done) {
-    console.log('test');
     User.findOne({ username: username.toLowerCase() }, function (err, user) {
-      console.log(username);
-      console.log(user);
       if (err) {
-        console.log(err);
         return done(err);
       }
       // Return if user not found in database

@@ -116,7 +116,6 @@ export class UpdateUserComponent implements OnInit {
 
      //Load the user details
      this.userService.getUser(params['username']).subscribe(data => {
-       console.log(data);
        this.user = data;
        if (this.user.username.toLowerCase() === 'admin'){
           this.router.navigate(['/admin/users']);
@@ -152,7 +151,6 @@ export class UpdateUserComponent implements OnInit {
       
     },
     error => {
-      console.log(error);
     })
   }
 
@@ -163,7 +161,6 @@ export class UpdateUserComponent implements OnInit {
   deleteUser(username){
     //delete user
     this.userService.deleteUser(username).subscribe(data => {
-      console.log('Deleted the user');
 
       if (this.isLoggedInUser(username)){
         this.authenticationService.logout().subscribe(data => {

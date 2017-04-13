@@ -58,7 +58,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(){
-    console.log('Destroying app component');
     this.connection.unsubscribe();
   }
 
@@ -71,10 +70,8 @@ export class AppComponent implements OnInit, OnDestroy {
     notificationService.notificationEmitted$.subscribe(
         data => {
             // data should contain a message and a type
-            console.log("Notification to show: ", data);
             this.notification = data;
             setTimeout(() => {
-              console.log(this.notification);
               this.notification = {
                 message: '',
                 type: ''
@@ -84,7 +81,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
      if (this.chatService.getActiveConnection() == null){
        this.connection = this.chatService.connect().subscribe(data => {
-          console.log('Connected to socket in app component');
        });
     }
   }
@@ -96,7 +92,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   logout(){
     this.authenticationService.logout().subscribe(data => {
-      console.log('isLoggedIn: ', data);
       this.router.navigate(['/login']);      
     },
     error => {

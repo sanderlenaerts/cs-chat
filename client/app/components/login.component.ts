@@ -86,18 +86,15 @@ export class LoginComponent implements OnInit {
     this.submitted = true;
     this.authenticationService.login(this.login.value)
       .subscribe(data => {
-        console.log(data);
         this.authenticationService.changeAuthenticated(true);
         this.router.navigate(['/info']);
       },
       err => {
         this.errors = []
         for (var error of err.json()){
-          console.log(error.msg);
           this.errors.push(error.msg);
         }
         this.submitted = false;
-        console.log(err);
       })
   }
 
