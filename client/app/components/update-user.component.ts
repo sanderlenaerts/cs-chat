@@ -125,7 +125,11 @@ export class UpdateUserComponent implements OnInit {
        })
      },
        error => {
-         //TODO: error message
+         this.router.navigate(['/admin/users']);
+         this.notificationService.notify({
+          message: error,
+          type: 'error'
+        })
        });
    });
   }

@@ -29,6 +29,11 @@ module.exports.getUser = function(req, res, next) {
     if (err){
       next(err);
     }
+    else if (!user){
+      res.status(404).json({
+        msg: "The user with this username does not exist"
+      })
+    }
     else {
       res.status(200).json(user);
     }

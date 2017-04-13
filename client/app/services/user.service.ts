@@ -46,6 +46,11 @@ export class UserService {
 
     return this.http.get('/api/user', requestOptions)
       .map((response: Response) => response.json())
+      .catch((error:any) => {
+        if (error.status === 404){
+          return Observable.throw("The user with name '" + username +  "' was not found");
+        }
+      })
   }
 
   deleteUser(username){
