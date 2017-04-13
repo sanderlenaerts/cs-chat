@@ -103,29 +103,28 @@ module.exports.register = function(req, res, next) {
     user.role = req.body.role.toUpperCase();
 
     //TODO: Before saving new user, check if user with username exists or not
-    console.log('Saving user');
-    user.save(function(err){
 
-      // Check if there is a MongoError with code 11000
-      // This means there is an account with this username already
-      if (err && err.name == "MongoError" && err.code=="11000"){
-        var error = new Error("A user already exists with that username. Please use another.");
-        error.status = 409;
-        res.status(error.status).json([{msg: error.message}])
-      }
-      else if (err) {
-        console.log(err);
+    User.findOne({username: user.username}, function(err, found) {
+      if (err){
         next(err);
       }
-      else {
-        console.log("Works");
-        res.status(201).json({'message': 'User was added correctly', 'success': true});
+      else if (found){
+         res.status(409).json([{msg: 'A user already exists with that username. Please use another.'}]);
       }
-    });
-
+      else {
+        user.save(function(err){
+          if (err) {
+            console.log(err);
+            next(err);
+          }
+          else {
+            console.log("Works");
+            res.status(201).json({'message': 'User was added correctly', 'success': true});
+          }
+        });
+      }
+    })
   }
-
-
 };
 
 

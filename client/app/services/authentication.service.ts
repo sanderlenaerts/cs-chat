@@ -4,6 +4,7 @@ import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import { Subject } from 'rxjs/Subject';
+import { NotificationService } from './notification.service';
 import { User } from '../models/user';
 
 
@@ -16,7 +17,7 @@ export class AuthenticationService {
   @Output()
   authChange = new EventEmitter();
 
-  constructor(private http: Http){
+  constructor(private http: Http, private notificationService: NotificationService){
     this.token = JSON.parse(localStorage.getItem('token'));
     this.user = JSON.parse(localStorage.getItem('user'));
     if (this.user == null){
@@ -91,6 +92,11 @@ export class AuthenticationService {
     }
     localStorage.removeItem('user');
     this.changeAuthenticated(false);
+
+    this.notificationService.notify({
+      message: 'You were successfully logged out',
+      type: 'success'
+    });
 
     return Observable.create(observer => {
       // Yield a single value and complete

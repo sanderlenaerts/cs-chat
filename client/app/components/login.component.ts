@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { AuthenticationService } from '../services/authentication.service';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NotificationService } from '../services/notification.service';
 
 @Component({
   selector: 'login-page',
@@ -64,7 +65,7 @@ export class LoginComponent implements OnInit {
   @Output()
   loginSuccess = new EventEmitter(); 
 
-  constructor(private authenticationService: AuthenticationService, private fb: FormBuilder, private router: Router){
+  constructor(private authenticationService: AuthenticationService, private fb: FormBuilder, private router: Router, private notificationService: NotificationService){
       this.login = this.fb.group({
         username: [null, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(10)])],
         password: [null, Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(10)])]
@@ -101,8 +102,9 @@ export class LoginComponent implements OnInit {
   }
 
   logout(){
-    this.authenticationService.logout();
-    // TODO: On success show a success message
+    this.authenticationService.logout().subscribe(status => {
+      this.isLoggedIn = status;
+    });
   }
 
 

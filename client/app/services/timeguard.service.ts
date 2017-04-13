@@ -14,14 +14,6 @@ export class TimeGuard implements CanActivate {
             // logged in so return true
             if(tokenNotExpired(null, token)){
               // Everything works out
-              return true;
-            }
-            else {
-              // If expired request new token
-              this.authenticationService.logout();
-              //TODO: Send message along that you have to log in again
-              //TODO: Only navigate with router if logout success (observable?)
-
               // Check if the current time of today is between 8.30 and 21.30
 
               var betweenOfficeHours = this.authenticationService.betweenOffice();
@@ -30,6 +22,12 @@ export class TimeGuard implements CanActivate {
                 this.router.navigate(['/']);
               }
               return betweenOfficeHours;
+            }
+            else {
+              // If expired request new token
+              this.authenticationService.logout().subscribe(data => {
+                this.router.navigate(['/login']);
+              });
             }
         }
  

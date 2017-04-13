@@ -97,12 +97,7 @@ export class AppComponent implements OnInit, OnDestroy {
   logout(){
     this.authenticationService.logout().subscribe(data => {
       console.log('isLoggedIn: ', data);
-      this.router.navigate(['/login']);
-      this.notificationService.notify({
-        message: 'You were successfully logged out',
-        type: 'success'
-      });
-      
+      this.router.navigate(['/login']);      
     },
     error => {
       this.notificationService.notify({

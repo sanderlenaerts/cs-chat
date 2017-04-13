@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, FormBuilder, 
 import { AuthenticationService } from '../services/authentication.service';
 import { Router } from '@angular/router';
 import { WhitespaceValidator } from './validators/whitespace.validator';
+import { NotificationService } from '../services/notification.service';
 
 // RxJS operators
 import 'rxjs/add/operator/map';
@@ -66,7 +67,7 @@ export class RegisterComponent implements OnInit {
   errors: String []
   submitted: boolean
 
-  constructor(private fb: FormBuilder, private authenticationService: AuthenticationService, private router: Router){}
+  constructor(private fb: FormBuilder, private authenticationService: AuthenticationService, private router: Router, private notificationService: NotificationService){}
 
 
   ngOnInit(){
@@ -84,11 +85,12 @@ export class RegisterComponent implements OnInit {
       this.authenticationService.register(this.register.value)
         .subscribe(
           data => {
-            this.errors = [];
-            console.log("Data", data);
-            
-            //TODO: Success message
+            this.errors = [];            
             this.router.navigate(['/admin/users']);
+            this.notificationService.notify({
+              message: "User was successfully added",
+              type: "success"
+            })
           },
           err => {
             this.submitted = false;
@@ -98,7 +100,6 @@ export class RegisterComponent implements OnInit {
               console.log(error.msg);
               this.errors.push(error.msg);
             }
-            //TODO: Display error message
           }
         )
     }

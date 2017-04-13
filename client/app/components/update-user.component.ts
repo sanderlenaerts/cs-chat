@@ -166,9 +166,10 @@ export class UpdateUserComponent implements OnInit {
       console.log('Deleted the user');
 
       if (this.isLoggedInUser(username)){
-        this.authenticationService.logout();
-        // TODO: Change to observable so 'navigate' can move into success of the observable
-        this.router.navigate(['/login']);
+        this.authenticationService.logout().subscribe(data => {
+          this.router.navigate(['/login']);
+        });
+        
       }
       else {
         this.router.navigate(['/admin/users'])

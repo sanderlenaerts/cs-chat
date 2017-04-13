@@ -18,10 +18,10 @@ export class AuthGuard implements CanActivate {
             }
             else {
               // If expired request new token
-              this.authenticationService.logout();
-              //TODO: Send message along that you have to log in again
-              //TODO: Only navigate with router if logout success (observable?)
-              this.router.navigate(['/login']);
+              this.authenticationService.logout().subscribe(data => {
+                this.router.navigate(['/login']);
+              });
+              
               return false;
             }
             

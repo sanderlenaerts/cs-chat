@@ -125,8 +125,6 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
 export class ChatContainerComponent implements OnInit, OnDestroy {
   connection: any;
   isLoggedIn: boolean;
-
-  //TODO: Look into changing it into an observable
   reset: boolean = false;
 
   messages: any[] = [];
@@ -189,7 +187,6 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     
     //Send the form data
     this.chatService.sendSupportData(this.ticket).subscribe(data => {
-      // TODO: Success messages
       this.reset = !this.reset;
     })
   }
