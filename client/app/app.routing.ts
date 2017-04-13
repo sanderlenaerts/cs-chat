@@ -48,6 +48,10 @@ const appRoutes : Routes = [
       roles: ['ADMIN']
     }
   },
+  {
+    path: '**',
+    redirectTo: 'info'
+  }
 
 ];
 
