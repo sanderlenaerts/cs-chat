@@ -102,8 +102,6 @@ module.exports.register = function(req, res, next) {
 
     user.role = req.body.role.toUpperCase();
 
-    //TODO: Before saving new user, check if user with username exists or not
-
     User.findOne({username: user.username}, function(err, found) {
       if (err){
         next(err);
