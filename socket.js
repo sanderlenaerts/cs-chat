@@ -362,6 +362,7 @@ module.exports = function(io) {
       delete staffInChat[staffId];
 
       disableChat(staffId);
+      endConversation(uid, 'customer');
       updateStaffQueue();
     }
 
@@ -393,7 +394,9 @@ module.exports = function(io) {
         }
       }
       else {
+        console.log('Ending conversation of user');
         if (io.sockets.connected.hasOwnProperty(clientInformation[id].socket)) {
+          console.log('Customer found');
           io.sockets.connected[clientInformation[id].socket].emit('endConversation',{type: 'endConversation'});
         }
       }

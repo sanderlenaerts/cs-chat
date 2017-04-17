@@ -14,7 +14,7 @@ import { FocusDirective } from '../../directives/focus.directive';
         <div class="inner-chat-header">
           <h3>Live Chat Support</h3>
         </div>
-        <div *ngIf="!isLoggedIn" class="close-button"><i class="fa fa-times" aria-hidden="true" (click)="endConversation()"></i></div>
+        <div *ngIf="!isLoggedIn && active" class="close-button"><i class="fa fa-times" aria-hidden="true" (click)="endConversation()"></i></div>
       </div>
       <div class="chat-content">
         <div class="chat-partner" *ngIf="active">

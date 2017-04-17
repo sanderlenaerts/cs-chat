@@ -102,7 +102,7 @@ Discard chat<i class="fa fa-exclamation" aria-hidden="true"></i>
 
      <modal-content class="user-details">
        <p>Are you sure you want to discard the chat session? This will disconnect the customer and no ticket can be saved.</p>
-       <button (click)="discardModal.close();stopChat()" class="danger-button"><i class="fa fa-check"></i> Discard chat</button>
+       <button (click)="discardModal.close();stopChat();clearChat()" class="danger-button"><i class="fa fa-check"></i> Discard chat</button>
        <button (click)="discardModal.close()"><i class="fa fa-times"></i> Cancel </button>
      </modal-content>
   </modal>
@@ -207,9 +207,20 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     //this.partner = null;
   }
 
+  clearChat(){
+    this.messages = [];
+    this.ticket = {
+      support: {},
+      valid:false,
+      chat: []
+    }
+    this.partner = null;
+    this.active = false;
+    this.chatDisabled = false;
+  }
+
   disconnect(data){
     this.stopChat();
-    this.connection.unsubscribe();
   }
 
   sendSupportData(supportForm){
