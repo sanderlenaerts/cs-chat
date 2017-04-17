@@ -1,0 +1,37 @@
+@import 'vars'
+
+.wrapper
+    max-width: 760px
+    padding: 0 5%
+    margin: 40px auto
+
+    h1 
+        margin-bottom: 0
+
+    h2 
+        margin: 40px 0 0
+
+    ul
+        list-style-type: none
+        padding: 0
+
+        li
+            padding: 20px 0
+            border-bottom: 1px solid lighten($grey-tint, 30%)
+
+            &:first-child
+                padding-top: 10px
+        p
+            margin: 0
+            padding: 0
+
+            &:first-child
+                font-weight: 600
+                font-size: $font-size-small
+
+            &:nth-child(even)
+                font-weight: 100
+            
+        
+            &:nth-child(odd)
+                margin-bottom: 0

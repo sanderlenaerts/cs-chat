@@ -1,0 +1,37 @@
+{
+   "help": [{
+        "display": "WiFi Issues",
+        "faq": [
+            {
+            "question": "My internet is not working on my iPhone. What do I do?",
+            "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            }
+        ]
+    },
+    {
+        "display": "Connection Issues",
+        "faq": [
+            {
+            "question": "My internet is not working on my iPhone. What do I do?",
+            "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            }
+        ]
+    }
+    ]
+}
