@@ -57,16 +57,19 @@ export class AppComponent implements OnInit, OnDestroy {
     
   }
 
+  // On destroy we need to unsubscribe from the observable
   ngOnDestroy(){
     this.connection.unsubscribe();
   }
 
   constructor(private authenticationService: AuthenticationService, private router: Router, private notificationService: NotificationService, private chatService: ChatService){
+    // Subsribe to the observable that emits an event when the authenitcated state changes (log out, log in)
     authenticationService.changeEmitted$.subscribe(
         authenticated => {
             this.authenticated = authenticated;
     });
 
+    // Subscribe to the observable that emits an event when a notification needs to be displayed 
     notificationService.notificationEmitted$.subscribe(
         data => {
             // data should contain a message and a type
@@ -79,6 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
             }, 4000);
      });
 
+     // If no connection was made yet, create one
      if (this.chatService.getActiveConnection() == null){
        this.connection = this.chatService.connect().subscribe(data => {
        });
@@ -89,7 +93,11 @@ export class AppComponent implements OnInit, OnDestroy {
     this.logout();
   }
 ;
-
+  /**
+   * Method will call the authentication service to log out
+   * On success the browser will navigate to the login page
+   * One error a notification will be displayed
+   */
   logout(){
     this.authenticationService.logout().subscribe(data => {
       this.router.navigate(['/login']);      

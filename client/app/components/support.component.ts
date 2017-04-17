@@ -120,6 +120,7 @@ export class SupportFormComponent implements OnInit, OnChanges {
 
 
   ngOnInit(){
+    // Initialize the support form
     this.support = this.fb.group({
       name: ['', Validators.required],
       type: ['', Validators.required],
@@ -148,6 +149,7 @@ export class SupportFormComponent implements OnInit, OnChanges {
       otherFix: ['']
     })
 
+    // When the ticket is changed, emit an event to communicate the changes to the parent component
     this.support.valueChanges.subscribe(data => {
       //Send the data to the backend
       var obj = {
@@ -159,6 +161,7 @@ export class SupportFormComponent implements OnInit, OnChanges {
     });
   }
 
+  // Detect a change to context
   ngOnChanges(change: SimpleChanges){
     if (change.hasOwnProperty('customer')){
       var customer = change['customer'];
@@ -170,55 +173,15 @@ export class SupportFormComponent implements OnInit, OnChanges {
       }
     }
     else if (change.hasOwnProperty('reset')){
+      // Reset the form if the reset property was altered
       if (change['reset']){
         this.support.reset();
       }
     }
   }
 
+  // On reload, refill the form with data
   fillForm(ticket){
     this.support.patchValue(ticket.support);
   }
-
-  checkOtherProceed(value){
-    if (value = ''){
-      // uncheck the checkbox
-     
-    }
-    else {
-      // check the checkbox
-    }
-  }
-
-  checkOtherFix(value){
-    if (value = ''){
-      // uncheck the checkbox
-    }
-    else {
-      // check the checkbox
-    }
-  }
-
-  checkboxRequired(group: FormGroup){
-    var valid = false;
-
-    for (let name in group.controls) {
-      var val = group.controls[name].value;
-      if (val) {
-        valid = true;
-        break;
-      }
-    }
-
-    if (valid) {
-      return null;
-    }
-
-    return {
-      checkboxRequired: true
-    };
-  }
-
-
-
 }

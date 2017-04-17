@@ -141,6 +141,8 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
   @ViewChild(SupportFormComponent) support: SupportFormComponent;
 
   constructor(private chatService: ChatService, private authenticationService: AuthenticationService, private notificationService: NotificationService){
+    // When the authenticated state changes, event is emitted
+    // Subscribe to observable to change the state here
     authenticationService.changeEmitted$.subscribe(
       authenticated => {
         this.isLoggedIn = authenticated;
@@ -151,22 +153,34 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   ngOnInit(){
     this.isLoggedIn = this.authenticationService.isLoggedIn();
+
+    // Get the active connection and subscribe to it
     this.connection = this.chatService.getActiveConnection().subscribe(data => {
       this.handleData(data);
     })
+
+    // If the user is logged in, check if there is a chat going on and get the amount of people in queue
     if (this.isLoggedIn){
+      // Get people in queue
       this.chatService.getUpdates();
+
+      // Get active chat if any
       this.chatService.getChat();
     }
     else {
+
+      // If not a logged in user, check if the user was registered before
+      // This way the user doesn't need to refill the form on reload
       this.chatService.isRegistered();
     }
   }
 
-
+  // Filled in customer support form handle
   getCustomerData(customer){
     this.registered = true;
     this.customer = customer;
+
+    // Update the customer in the socket backend
     this.chatService.updateCustomer(customer);
   }
 
@@ -177,14 +191,17 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Ask to be paired up with the next customer
   nextCustomer(){
     this.chatService.nextCustomer();
   }
 
+  // End the chat by staff member
   terminateChat(){
+    // Unmatch customer and staff member in socket
     this.chatService.stopConversation();
     
-    //Send the form data
+    //Send the ticket form data
     this.chatService.sendSupportData(this.ticket).subscribe(data => {
       this.reset = !this.reset;
     })
@@ -192,21 +209,23 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
 
   toggleQueue(){
     if (!this.inQueue){
-      // Create the connection to socket.io
+      // Queue up for a chat
       this.chatService.joinQueue();
     }
     else {
-      // Stop the connection
+      // Remove the customer from the queue
       this.chatService.leaveQueue();
     }
     this.inQueue = !this.inQueue;
   }
 
   stopChat(){
+    // Unmatch the customer and staff member in socket
     this.chatService.stopConversation();
     //this.partner = null;
   }
 
+  // Clear the chatbox 
   clearChat(){
     this.messages = [];
     this.ticket = {
@@ -223,6 +242,7 @@ export class ChatContainerComponent implements OnInit, OnDestroy {
     this.stopChat();
   }
 
+  // Save the support form and send a request to the backend to send an email
   sendSupportData(supportForm){
     var data = {
       support: supportForm.support,

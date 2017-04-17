@@ -34,9 +34,9 @@ export class LandingComponent implements OnInit {
   faq: any[]
 
   ngOnInit(){
+    // Get all the questions listed in the faq.json file
     this.getFAQ().subscribe(data => {
       this.faq = data.help;
-      console.log(data.help)
     })
   }
 
@@ -44,6 +44,7 @@ export class LandingComponent implements OnInit {
     
   }
 
+  // Send an http request to the faq.json file
   getFAQ(): Observable<any> {
     return this.http.get("../../faq.json")
       .map((res:any) => res.json());

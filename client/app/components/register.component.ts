@@ -86,6 +86,7 @@ export class RegisterComponent implements OnInit {
         .subscribe(
           data => {
             this.errors = [];            
+            // On successful register navigate back to the users page and display a notification
             this.router.navigate(['/admin/users']);
             this.notificationService.notify({
               message: "User was successfully added",
@@ -93,6 +94,7 @@ export class RegisterComponent implements OnInit {
             })
           },
           err => {
+            // Display the errors
             this.submitted = false;
             this.errors = [];
             for (var error of err.json()){

@@ -47,6 +47,7 @@ export class UserInputComponent implements OnInit {
   }
 
   ngOnInit(){
+    // Initialize the form
     this.form = this.fb.group({
       name: [null, Validators.required],
       email: [null, Validators.compose([Validators.required, EmailValidator.isValidMailFormat])],

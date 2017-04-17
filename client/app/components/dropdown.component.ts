@@ -30,6 +30,8 @@ export class DropdownComponent {
 
   }
 
+
+  // Emit an event to logout
   logout(){
     this.disconnect.emit(false);
   }

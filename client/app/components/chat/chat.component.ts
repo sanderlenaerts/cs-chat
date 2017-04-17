@@ -55,14 +55,16 @@ import { FocusDirective } from '../../directives/focus.directive';
 
 export class ChatComponent implements OnInit, AfterViewChecked {
 
+  // Autoscroll container
   @ViewChild('messageList') private myScrollContainer: ElementRef;
+
+  // Refocus on input field
   @ViewChild('textarea') text: ElementRef;
 
   @Input()
   isLoggedIn: boolean
   message: String = '';
   inputFocused: boolean = false;
-  workActive: boolean;
 
   @Input()
   active: boolean;
@@ -81,16 +83,16 @@ export class ChatComponent implements OnInit, AfterViewChecked {
 
   constructor(private authenticationService : AuthenticationService, private chatService : ChatService){}
 
+  // Put focus back on the input field
   moveFocus(){
     this.inputFocused = true;
     setTimeout(() => {this.inputFocused = false});
   }
 
   ngOnInit(){
-    //this.isLoggedIn = this.authenticationService.isLoggedIn();
-    this.workActive = false;
   }
 
+  // Send a send message reques to the socket
   sendMessage(){
     if (this.message != ''){
       this.chatService.sendMessage(this.message);
@@ -98,14 +100,18 @@ export class ChatComponent implements OnInit, AfterViewChecked {
     }
   }
 
+  // Every time the view is checked (every time a new message arrives), scroll the chatbox to the bottom
   ngAfterViewChecked(){
     this.scrollToBottom();
   }
 
+  // Emit an output event to end the chat
+  // No variables needed, can pass whatever
   endConversation(){
     this.chatend.emit('');
   }
 
+  // Scroll the chat to the bottom
   private scrollToBottom(): void {
       try {
           this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;

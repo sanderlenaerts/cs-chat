@@ -125,6 +125,7 @@ export class UpdateUserComponent implements OnInit {
           })
        }
 
+       // Fill in the form with the known data
        this.update.patchValue({
          username: data.username,
          name: data.name,
@@ -141,6 +142,7 @@ export class UpdateUserComponent implements OnInit {
    });
   }
 
+  // Update the user, on success show notification
   doUpdate(){
     this.userService.updateUser(this.user.username, this.update.value).subscribe(data => {
       this.notificationService.notify({
@@ -162,11 +164,11 @@ export class UpdateUserComponent implements OnInit {
     //delete user
     this.userService.deleteUser(username).subscribe(data => {
 
+      // If it's the user that is logged in, also log out that user
       if (this.isLoggedInUser(username)){
         this.authenticationService.logout().subscribe(data => {
           this.router.navigate(['/login']);
         });
-        
       }
       else {
         this.router.navigate(['/admin/users'])

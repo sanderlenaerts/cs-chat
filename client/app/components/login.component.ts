@@ -62,15 +62,19 @@ export class LoginComponent implements OnInit {
   submitted: boolean
   isLoggedIn: boolean
   user: any
+
   @Output()
   loginSuccess = new EventEmitter(); 
 
   constructor(private authenticationService: AuthenticationService, private fb: FormBuilder, private router: Router, private notificationService: NotificationService){
+      // Initialize the login form   
       this.login = this.fb.group({
         username: [null, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(10)])],
         password: [null, Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(10)])]
       })
 
+      // When authenticated state changes, change state in this component
+      // Subscribe to the observable
       authenticationService.changeEmitted$.subscribe(
         authenticated => {
             this.isLoggedIn = authenticated;
@@ -84,12 +88,15 @@ export class LoginComponent implements OnInit {
 
   doLogin(){
     this.submitted = true;
+    // Send a login request
+    // On success navigate to the info page
     this.authenticationService.login(this.login.value)
       .subscribe(data => {
         this.authenticationService.changeAuthenticated(true);
         this.router.navigate(['/info']);
       },
       err => {
+        // if errors, display them
         this.errors = []
         for (var error of err.json()){
           this.errors.push(error.msg);
@@ -98,6 +105,7 @@ export class LoginComponent implements OnInit {
       })
   }
 
+  // Send a logout request
   logout(){
     this.authenticationService.logout().subscribe(status => {
       this.isLoggedIn = status;

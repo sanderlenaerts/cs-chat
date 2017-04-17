@@ -10,8 +10,6 @@ import { SearchPipe } from '../filters/user.filter';
 @Component({
   selector: 'search',
   template: `
-
-
     <div>
       <input #search type="text" placeholder="Search..." (input)="update.emit(search.value)">
     </div>
@@ -27,6 +25,7 @@ export class SearchComponent implements OnInit {
 
   constructor(){}
 
+  // Emit an empty string on init to allow for empty search box on init
   ngOnInit(){
     this.update.emit('');
   }

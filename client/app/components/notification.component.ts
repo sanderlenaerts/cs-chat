@@ -26,6 +26,7 @@ export class NotificationComponent implements OnInit {
         }
     }
 
+    // Emit an event that will stop displaying the notification
     discardNotification(){
         this.discard.emit(true);
     }
