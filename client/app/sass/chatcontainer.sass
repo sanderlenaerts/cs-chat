@@ -91,3 +91,46 @@
 
         &:last-child
           margin-bottom: 0
+
+
+.circle 
+  display: flex
+  background: $success
+  border-radius: 300px
+  height: 100px
+  width: 100px
+  justify-content: center
+  align-items: center
+  font-size: $font-size-small
+  color: $off-white
+
+  &.overlap
+    position: absolute
+    height: 84px
+    width: 84px
+
+.animation
+  animation: pulsate 2.5s ease-out
+  animation-iteration-count: infinite
+
+
+.queue-container
+  display: flex
+  align-items: center
+  justify-content: center
+
+
+
+
+@keyframes pulsate 
+  0% 
+    transform: scale(0.1, 0.1)
+    opacity: 0.0
+  
+  50% 
+    opacity: 1.0
+
+  100% 
+    transform: scale(1.2, 1.2)
+    opacity: 0.0
+  

@@ -17,8 +17,14 @@ import { NotificationService } from '../../services/notification.service';
         <p class="error">{{partner.name}} has disconnected from the chat
       </div>
       <div *ngIf="!active && !isLoggedIn && registered" class="btn-container">
+        
         <button [ngClass]="{'success-btn': inQueue == false, 'danger-btn': inQueue == true}" (click)="toggleQueue()" class="btn full-btn">{{ inQueue ? 'Leave queue' : 'Start chatting'}}</button>
-        <p *ngIf="inQueue">You are currently number {{position}} in queue</p>
+        <p *ngIf="inQueue">Current position in queue</p>
+        <div *ngIf="inQueue" class="queue-container">
+            <div class="circle animation"> </div>
+            <div class = "circle overlap">{{position}}</div>
+        </div>
+
       </div>
 
     </div>
