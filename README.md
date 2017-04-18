@@ -67,3 +67,13 @@ If you are using a MongoDb service like Compose, you can change the URI in "db.j
 open http://ip:3000/
 
 ```
+
+### Screenshots
+
+![Self-help](./readme-img/faq.png)
+
+![Chat](./readme-img/chat.png)
+
+![Admin](./readme-img/admin.png)
+
+![Ticket](./readme-img/ticket.png)
