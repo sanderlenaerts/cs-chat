@@ -3,6 +3,7 @@ import { AuthenticationService } from '../services/authentication.service';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NotificationService } from '../services/notification.service';
+import { ChatService } from '../services/chat.service';
 
 @Component({
   selector: 'login-page',
@@ -66,7 +67,7 @@ export class LoginComponent implements OnInit {
   @Output()
   loginSuccess = new EventEmitter(); 
 
-  constructor(private authenticationService: AuthenticationService, private fb: FormBuilder, private router: Router, private notificationService: NotificationService){
+  constructor(private authenticationService: AuthenticationService, private fb: FormBuilder, private router: Router, private notificationService: NotificationService, private chatService: ChatService){
       // Initialize the login form   
       this.login = this.fb.group({
         username: [null, Validators.compose([Validators.required, Validators.minLength(3), Validators.maxLength(10)])],
@@ -94,6 +95,7 @@ export class LoginComponent implements OnInit {
       .subscribe(data => {
         this.authenticationService.changeAuthenticated(true);
         this.router.navigate(['/info']);
+        this.chatService.login();
       },
       err => {
         // if errors, display them
@@ -109,6 +111,7 @@ export class LoginComponent implements OnInit {
   logout(){
     this.authenticationService.logout().subscribe(status => {
       this.isLoggedIn = status;
+      this.chatService.logout();
     });
   }
 

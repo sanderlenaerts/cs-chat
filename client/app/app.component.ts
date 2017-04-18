@@ -101,6 +101,7 @@ export class AppComponent implements OnInit, OnDestroy {
   logout(){
     this.authenticationService.logout().subscribe(data => {
       this.router.navigate(['/login']);      
+      this.chatService.logout();
     },
     error => {
       this.notificationService.notify({

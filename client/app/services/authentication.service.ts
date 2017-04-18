@@ -66,6 +66,7 @@ export class AuthenticationService {
       .map((response: Response) => {
         var res = response.json();
 
+
         // set token property
         this.token = res.token;
         this.user = {

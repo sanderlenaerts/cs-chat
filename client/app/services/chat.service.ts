@@ -94,6 +94,50 @@ export class ChatService {
     })
   }
 
+  login(){
+    let userData;
+    let type;
+    let uid = localStorage.getItem('uid');
+    let user = this.authenticationService.user;
+    
+    if (user.name == ''){
+      userData = user;
+      type = "register";
+    }
+    else {
+      userData = this.authenticationService.user;
+      type = "auth";
+    }
+    this.socket.emit('login',
+    {
+      uid: uid,
+      user: userData,
+      type: type
+    });
+  }
+
+  logout(){
+    let userData;
+    let type;
+    let uid = localStorage.getItem('uid');
+    let user = this.authenticationService.user;
+    
+    if (user.name == ''){
+      userData = user;
+      type = "register";
+    }
+    else {
+      userData = this.authenticationService.user;
+      type = "auth";
+    }
+    this.socket.emit('logout',
+    {
+      uid: uid,
+      user: userData,
+      type: type
+    });
+  }
+
   disconnect(){
     this.socket.disconnect();
   }
@@ -120,6 +164,7 @@ export class ChatService {
       ticket: ticket
     })
   }
+
 
   private connectSocket(user){
     this.socket = io("/");

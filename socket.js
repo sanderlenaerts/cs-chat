@@ -23,6 +23,194 @@ module.exports = function(io) {
 
     socket.emit('connect', {});
 
+    socket.on('login', function(data){
+      let uid;
+
+      if (data.uid == null){
+        uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+      }
+      else {
+        uid = data.uid;
+      }
+
+      if (data.type == "auth"){
+        // logged in user
+        if (clientInformation.hasOwnProperty(uid)){
+          if (clientsInChat.hasOwnProperty(uid)){
+            stopConversationByClient(uid);
+            
+          }
+          delete clientInformation[uid];
+        }
+        
+
+
+        if (staff.hasOwnProperty(uid)){
+          // update the socket id
+          staff[uid].socket = socket.id;
+          staff[uid].name = data.user.name;
+
+          if (staffInChat.hasOwnProperty(uid)){
+            socket.emit('continue', {
+              type: 'continue',
+              partner: clientInformation[staffInChat[uid].partnerId],
+              chat: staffInChat[uid].chat,
+              ticket: staffInChat[uid].ticket
+            });
+
+            staffInChat[uid].socket = socket.id;
+            clientsInChat[staffInChat[uid].partnerId].partner = socket.id;
+          }
+        }
+        else {
+          var member = new Object();
+          member.name = data.user.name;
+          member.socket = socket.id;
+
+          staff[uid] = member;
+
+
+          console.log('Staff after register: ', staff);
+        }
+
+        // Immediately show the member how many users are in queue
+        if (io.sockets.connected[socket.id]) {
+          io.sockets.connected[socket.id].emit('queue-length',{type:'queue-length', length: queue.length});
+        }
+      }
+      
+      else {
+        console.log("Register customer");
+        if (staff.hasOwnProperty(uid)){
+          if (staffInChat.hasOwnProperty(uid)){
+            stopConversationByStaff(uid);
+          }
+        }
+
+        if (clientInformation.hasOwnProperty(uid)){
+          clientInformation[uid].socket = socket.id;
+
+          if(isClientInChat(uid)){
+            clientsInChat[uid].socket = socket.id;
+            staffInChat[clientsInChat[uid].partnerId].partner = socket.id;
+
+
+          }
+        }
+        else {
+          var client = new Object();
+          client.name = '';
+          client.description = '';
+          client.email = '';
+          client.ip = socket.handshake.address;
+          client.socket = socket.id;
+
+          clientInformation[uid] = client;
+        }
+      }
+
+      socket.emit('identify', {
+        uid: uid
+      })
+    })
+
+    socket.on('logout', function(data){
+      let uid;
+
+      if (data.uid == null){
+        uid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+      }
+      else {
+        uid = data.uid;
+      }
+
+      if (data.type == "auth"){
+        // logged in user
+        if (clientInformation.hasOwnProperty(uid)){
+          if (clientsInChat.hasOwnProperty(uid)){
+            stopConversationByClient(uid);
+            
+          }
+          delete clientInformation[uid];
+        }
+        
+
+
+        if (staff.hasOwnProperty(uid)){
+          // update the socket id
+          staff[uid].socket = socket.id;
+          staff[uid].name = data.user.name;
+
+          if (staffInChat.hasOwnProperty(uid)){
+            socket.emit('continue', {
+              type: 'continue',
+              partner: clientInformation[staffInChat[uid].partnerId],
+              chat: staffInChat[uid].chat,
+              ticket: staffInChat[uid].ticket
+            });
+
+            staffInChat[uid].socket = socket.id;
+            clientsInChat[staffInChat[uid].partnerId].partner = socket.id;
+          }
+        }
+        else {
+          var member = new Object();
+          member.name = data.user.name;
+          member.socket = socket.id;
+
+          staff[uid] = member;
+
+
+          console.log('Staff after register: ', staff);
+        }
+
+        // Immediately show the member how many users are in queue
+        if (io.sockets.connected[socket.id]) {
+          io.sockets.connected[socket.id].emit('queue-length',{type:'queue-length', length: queue.length});
+        }
+      }
+      
+      else {
+        console.log("Register customer");
+        if (staff.hasOwnProperty(uid)){
+          if (staffInChat.hasOwnProperty(uid)){
+            stopConversationByStaff(uid);
+          }
+        }
+
+        if (clientInformation.hasOwnProperty(uid)){
+          clientInformation[uid].socket = socket.id;
+
+          if(isClientInChat(uid)){
+            clientsInChat[uid].socket = socket.id;
+            staffInChat[clientsInChat[uid].partnerId].partner = socket.id;
+
+
+          }
+        }
+        else {
+          var client = new Object();
+          client.name = '';
+          client.description = '';
+          client.email = '';
+          client.ip = socket.handshake.address;
+          client.socket = socket.id;
+
+          clientInformation[uid] = client;
+        }
+      }
+
+      socket.emit('identify', {
+        uid: uid
+      })
+    })
+
     socket.on('register', function(data){
       console.log("Registering user: ", data);
       let uid;
