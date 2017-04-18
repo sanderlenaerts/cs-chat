@@ -15,6 +15,7 @@ var clientsInChat = {}
 
 var clientInformation = {}
 
+var config = require('./config');
 
 module.exports = function(io) {
   io.sockets.on('connection', function(socket){
@@ -319,7 +320,7 @@ module.exports = function(io) {
               // The user reconnected within 10 seconds and now has a new socket id
             }
           }
-        }, 10000);
+        }, config.session);
       }
     })
 

@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
+var config = require('./config');
 
 var dbUri = 'mongodb://localhost/livechat';
 
 if(process.env.NODE_ENV === "production"){
-  dbUri = "mongodb://localhost/livechat";
+  dbUri = config.mongo;
 }
 
 mongoose.connect(dbUri, function(){

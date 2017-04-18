@@ -4,6 +4,7 @@ var nodemailer = require('nodemailer');
 var options = {};
 var transporter = nodemailer.createTransport(directTransport(options));
 var juice = require('juice');
+var config = require('../../config');
 
 var mapping = {
   name: 'Name',
@@ -164,7 +165,7 @@ var mail = function(req, res, next){
 
   transporter.sendMail({
     from: "noreply@hq.co.nz",
-    to: 'sander.lenaerts@gmail.com',
+    to: config.email,
     subject: '[TICKET] - Chat support',
     html: result
   });
