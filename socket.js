@@ -159,15 +159,19 @@ module.exports = function(io) {
     var updateStaffQueue = function(){
       // let the staff know the queue length
       for (var key in staff) {
-        
-        if (io.sockets.connected[staff[key].socket]) {
-          io.sockets.connected[staff[key].socket].emit('queue-length',{type:'queue-length', length: queue.length});
+        if (staff.hasOwnProperty(key)){
+          if (io.sockets.connected[staff[key].socket]) {
+            io.sockets.connected[staff[key].socket].emit('queue-length',{type:'queue-length', length: queue.length});
+          }
         }
+        
       }
       // Let the staff who are in chat know the queue length
       for (var key in staffInChat){
-        if (io.sockets.connected[staffInChat[key].socket]) {
-          io.sockets.connected[staffInChat[key].socket].emit('queue-length',{type:'queue-length', length: queue.length});
+        if (staffInChat.hasOwnProperty(key)){
+          if (io.sockets.connected[staffInChat[key].socket]) {
+            io.sockets.connected[staffInChat[key].socket].emit('queue-length',{type:'queue-length', length: queue.length});
+           }
         }
       }
     }
@@ -381,23 +385,30 @@ module.exports = function(io) {
 
     var disableChat = function(id){
       console.log('disableChat');
-      if (io.sockets.connected.hasOwnProperty(staff[id].socket)) {
-        console.log('Has property so should emit');
-        io.sockets.connected[staff[id].socket].emit('disableChat',{type: 'disableChat'});
-      }
+      if (staff.hasOwnProperty(id)){
+        if (io.sockets.connected.hasOwnProperty(staff[id].socket)) {
+          console.log('Has property so should emit');
+          io.sockets.connected[staff[id].socket].emit('disableChat',{type: 'disableChat'});
+        }
+      }     
     }
 
     var endConversation = function(id, type){
       if (type == 'staff'){
-        if (io.sockets.connected.hasOwnProperty(staff[id].socket)) {
-          io.sockets.connected[staff[id].socket].emit('endConversation',{type: 'endConversation'});
+        if (staff.hasOwnProperty(id)){
+          if (io.sockets.connected.hasOwnProperty(staff[id].socket)) {
+             io.sockets.connected[staff[id].socket].emit('endConversation',{type: 'endConversation'});
+          }
         }
+        
       }
       else {
         console.log('Ending conversation of user');
-        if (io.sockets.connected.hasOwnProperty(clientInformation[id].socket)) {
-          console.log('Customer found');
-          io.sockets.connected[clientInformation[id].socket].emit('endConversation',{type: 'endConversation'});
+        if (clientInformation.hasOwnProperty(id)){
+          if (io.sockets.connected.hasOwnProperty(clientInformation[id].socket)) {
+            console.log('Customer found');
+            io.sockets.connected[clientInformation[id].socket].emit('endConversation',{type: 'endConversation'});
+          }
         }
       }
       
@@ -498,8 +509,10 @@ module.exports = function(io) {
     var sendPositionInQueue = function(id){
       var index = queue.indexOf(id);
       var position = index + 1;
-      if (io.sockets.connected[clientInformation[id].socket]) {
-        io.sockets.connected[clientInformation[id].socket].emit('queue-position',{type:'queue-position', position: position});
+      if (clientInformation.hasOwnProperty(id)){
+        if (io.sockets.connected[clientInformation[id].socket]) {
+          io.sockets.connected[clientInformation[id].socket].emit('queue-position',{type:'queue-position', position: position});
+        }
       }
     }
 
