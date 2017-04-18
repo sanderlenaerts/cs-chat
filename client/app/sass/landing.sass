@@ -11,7 +11,8 @@
     h2 
         margin: 40px 0 0
 
-    ul
+
+    ul.questions
         list-style-type: none
         padding: 0
 
@@ -35,3 +36,30 @@
         
             &:nth-child(odd)
                 margin-bottom: 0
+
+    ul.categories
+        list-style-type: none
+        margin: 0
+        padding: 0
+        display: flex
+        flex-wrap: wrap
+        justify-content: flex-start
+        margin-top: 40px
+        transition: color 2s, background-color 2s
+        -webkit-transition: color 2s, background-color 2s; 
+        transition-timing-function: ease-in-out
+
+        li
+            display: inline-block
+            padding: 8px 15px
+            margin: 5px 5px
+            background-color: lighten($grey-tint, 30%)
+
+            &:hover
+                cursor: pointer
+                color: $off-white
+                background-color: lighten($success, 20%)
+            
+            &.active
+                color: $off-white
+                background-color: $success

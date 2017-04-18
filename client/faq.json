@@ -20,8 +20,8 @@
         "display": "Connection Issues",
         "faq": [
             {
-            "question": "My internet is not working on my iPhone. What do I do?",
-            "answer": "Try to turn it off and on again"
+                "question": "Nothing's working!",
+                "answer": "Try to turn it off and on again"
             },
             {
                 "question": "My internet is not working on my iPhone. What do I do?",
@@ -29,6 +29,91 @@
             },
             {
                 "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            }
+        ]
+    },
+    {
+        "display": "Hardware",
+        "faq": [
+            {
+                "question": "Nothing's working!",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "It doesn't turn on",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            }
+        ]
+    },
+    {
+        "display": "Other",
+        "faq": [
+            {
+                "question": "Nothing's working!",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "It doesn't turn on",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "Test",
+                "answer": "Try to turn it off and on again"
+            }
+        ]
+    },
+    {
+        "display": "Phones",
+        "faq": [
+            {
+                "question": "Nothing's working!",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            }
+        ]
+    },
+    {
+        "display": "Atlas",
+        "faq": [
+            {
+                "question": "Nothing's working!",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "It doesn't turn on",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "My internet is not working on my iPhone. What do I do?",
+                "answer": "Try to turn it off and on again"
+            }
+        ]
+    },
+    {
+        "display": "News",
+        "faq": [
+            {
+                "question": "Nothing's working!",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "It doesn't turn on",
+                "answer": "Try to turn it off and on again"
+            },
+            {
+                "question": "Test",
                 "answer": "Try to turn it off and on again"
             }
         ]

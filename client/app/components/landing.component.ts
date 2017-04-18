@@ -11,17 +11,18 @@ import 'rxjs/add/operator/catch';
   <div class="wrapper">
     <h1>FAQ</h1>
 
-    <div *ngFor="let category of faq">
-      <h2>{{category.display}}</h2>
-      <ul>
-        <li *ngFor="let row of category.faq">
+    <ul class="categories">
+      <li *ngFor="let row of faq" [ngClass]="active === row.display ? 'active' : ''" (click)="setQuestions(row.display)">{{row.display}}</li>
+    </ul>
+      
+      <ul class="questions">
+        <li *ngFor="let qa of questions">
           <p><i class="fa fa-caret-right" aria-hidden="true"></i>
-  {{row.question}}</p>
+  {{qa.question}}</p>
           <p>
-  {{row.answer}}</p>
+  {{qa.answer}}</p>
         </li>
       </ul>
-    </div>
 
     
   </div>
@@ -32,11 +33,16 @@ import 'rxjs/add/operator/catch';
 export class LandingComponent implements OnInit {
 
   faq: any[]
+  questions: any[]
+  active: String;
 
   ngOnInit(){
     // Get all the questions listed in the faq.json file
     this.getFAQ().subscribe(data => {
       this.faq = data.help;
+
+      this.active = data.help[0].display;
+      this.questions = data.help[0].faq;
     })
   }
 
@@ -48,5 +54,18 @@ export class LandingComponent implements OnInit {
   getFAQ(): Observable<any> {
     return this.http.get("../../faq.json")
       .map((res:any) => res.json());
+  }
+
+  setQuestions(display){
+    this.active = display;
+
+    for (var i = 0; i < this.faq.length; i++){
+      console.log(this.faq[i]);
+      if (this.faq[i].display == display){
+        this.questions = this.faq[i].faq;
+      }
+    }
+
+    
   }
 }
