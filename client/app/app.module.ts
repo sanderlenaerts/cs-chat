@@ -24,6 +24,7 @@ import { SupportFormComponent } from './components/support.component';
 import { DropdownComponent } from './components/dropdown.component';
 import { UpdateUserComponent } from './components/update-user.component';
 import { NotificationComponent } from './components/notification.component';
+import { HomeComponent } from './components/home.component';
 
 
 // Validators
@@ -92,7 +93,8 @@ function authHttpServiceFactory(http: Http, options: RequestOptions) {
     SearchComponent,
     DropdownComponent,
     UpdateUserComponent,
-    NotificationComponent
+    NotificationComponent,
+    HomeComponent
   ],
   bootstrap: [ AppComponent ],
   providers: [

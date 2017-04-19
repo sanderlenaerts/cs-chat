@@ -24,7 +24,7 @@ import { NotificationComponent } from './components/notification.component';
          <li *ngIf="authenticated && authenticationService.user.role == 'ADMIN'" [routerLinkActive]="['active']" [routerLink]="['/admin']">Admin Panel</li>
         </ul>
       </nav>
-      <div class="company-logo">
+      <div class="company-logo" [routerLink]="['/']">
         <img src="./dist/assets/images/hq.svg" width="84px">
       </div>
       <div *ngIf="authenticated" class="logout">

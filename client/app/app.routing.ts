@@ -12,7 +12,8 @@ import { ChatContainerComponent } from './components/chat/chat-container.compone
 import { LoginComponent } from './components/login.component';
 import { AdminComponent } from './components/admin.component';
 import { UsersComponent } from './components/users.component';
-import { RegisterComponent } from './components/register.component';
+import { RegisterComponent } from './components/register.component';``
+import { HomeComponent } from './components/home.component';
 
 import { UpdateUserComponent } from './components/update-user.component';
 
@@ -21,7 +22,7 @@ const appRoutes : Routes = [
     path: '',
     component: PublicComponent,
     children: [
-        { path: '', redirectTo: 'info', pathMatch: 'full' },
+        { path: '', component: HomeComponent },
         { path: 'info',  component: LandingComponent},
         {
           path: 'live-chat',

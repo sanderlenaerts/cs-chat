@@ -1,3 +1,5 @@
+
+
 html, body {
   margin: 0;
   padding: 0;
@@ -24,17 +26,7 @@ html {
   visibility: hidden;
 }
 
-
-
 .app-container {
   height: 100vh;
-  background:
-    /* top, transparent red, faked with gradient */
-    linear-gradient(
-      rgba(0, 0, 0, 0.65),
-      rgba(0, 0, 0, 0.65)
-    ),
-    /* bottom, image */
-    url("https://static.pexels.com/photos/210647/pexels-photo-210647.jpeg") no-repeat center center fixed;
-  background-size: cover;
+
 }

@@ -1,0 +1,37 @@
+@import "vars"
+
+.wrapper    
+    max-width: 720px
+    margin: 0 auto
+    padding:  0 5%
+        
+    p
+        margin-top: 40px
+        line-height: 2rem
+
+        a
+            color: $success
+
+    .btn-container
+        margin-top: 40px
+        display: flex
+        justify-content: space-between
+
+        .btn
+            color: $success
+            border-radius: 5px
+            background-color: rgba(0,0,0,0)
+            padding: 15px 25px
+            border: 1px solid $success
+            width: 47%
+            font-size: 0.8rem
+            font-weight: 100
+            //text-transform: uppercase
+
+            &:hover
+                color: $off-white
+                cursor: pointer
+                background-color: $success
+
+            &:focus
+                outline: 0

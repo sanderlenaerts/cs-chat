@@ -9,7 +9,7 @@ import 'rxjs/add/operator/catch';
   selector: 'landing',
   template: `
   <div class="wrapper">
-    <h1>FAQ</h1>
+    <h1>FAQs</h1>
 
     <ul class="categories">
       <li *ngFor="let row of faq" [ngClass]="active === row.display ? 'active' : ''" (click)="setQuestions(row.display)">{{row.display}}</li>
