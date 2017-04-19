@@ -9,6 +9,13 @@ import { NotificationComponent } from './components/notification.component';
 @Component({
   selector: 'my-app',
   template: `
+    <div class="stripe">
+      <div class="bar connect"></div>
+      <div class="bar support"></div>
+      <div class="bar security"></div>
+      <div class="bar cloud"></div> 
+      <div class="bar voice"></div>
+    </div>
     <header class="nav-header">
       <nav class="navbar">
         <ul>
