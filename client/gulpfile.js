@@ -80,7 +80,7 @@ gulp.task('bundle:js', function() {
 gulp.task('dev', ['sass:w']);
 
 //Default task for deployment compiling sass and typescript and bundling libraries
-gulp.task ('default', ['sass', 'compile:ts', 'bundle:libs'], function(){
+gulp.task ('default', ['sass', 'compile:ts', 'bundle:libs', 'assets'], function(){
     gulp.watch('./app/sass/**/*.sass', ['sass']);
     gulp.watch('./app/**/*.ts', ['compile:ts']);
 });
