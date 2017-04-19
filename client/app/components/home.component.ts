@@ -6,7 +6,7 @@ import { Injectable }     from '@angular/core';
   selector: 'home',
   template: `
   <div class="wrapper">
-    <p>Experiencing any issues with one of our networks? We are happy to be of help through any of our communication channels. You can also reach us through email at <a href="mailto:support@hq.net.nz">support@hq.net.nz</a> or give us a call on 0800 479 434.</p>
+    <p>Experiencing any issues with one of our networks? We are happy to be of help through any of our communication channels. You can reach us by email at <a href="mailto:support@hq.net.nz">support@hq.net.nz</a> or give us a call on <a href="tel:+64800479434">0800 479 434</a>.</p>
     <div class="btn-container">
         <button class="btn" [routerLink]="['/info']">Read the FAQs</button>
         <button class="btn" [routerLink]="['/livechat']">Chat with an employee</button>
