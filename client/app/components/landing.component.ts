@@ -60,7 +60,6 @@ export class LandingComponent implements OnInit {
     this.active = display;
 
     for (var i = 0; i < this.faq.length; i++){
-      console.log(this.faq[i]);
       if (this.faq[i].display == display){
         this.questions = this.faq[i].faq;
       }
