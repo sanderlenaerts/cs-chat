@@ -11,6 +11,7 @@ Technologies used:
 * HTML5 &amp; CSS3
 * Sass
 * MongoDB
+* Socket.io
 
 
 ## **Installation**
